@@ -180,52 +180,57 @@ const Index = () => {
     <DashboardLayout>
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col gap-4 mb-6 md:mb-8">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-foreground">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl md:text-2xl font-semibold text-foreground">
                 Riwayat Tes Kenali Diri
               </h1>
               <span className="inline-flex items-center justify-center h-6 min-w-[40px] px-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 {totalData}
               </span>
             </div>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-sm md:text-base text-muted-foreground mt-1">
               Menyajikan data hasil tes Kenali Diri user <span className="font-medium text-primary">REXTRA</span>
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => setBulkDeleteDialogOpen(true)}
               className="gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
             >
               <Trash2 className="h-4 w-4" />
-              Hapus Data Massal
+              <span className="hidden sm:inline">Hapus Data Massal</span>
+              <span className="sm:hidden">Hapus</span>
             </Button>
-            <Button onClick={() => setExportDialogOpen(true)} className="gap-2">
+            <Button size="sm" onClick={() => setExportDialogOpen(true)} className="gap-2">
               <Download className="h-4 w-4" />
-              Ekspor Data
+              <span className="hidden sm:inline">Ekspor Data</span>
+              <span className="sm:hidden">Ekspor</span>
             </Button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-1 mb-6 p-1 bg-muted/50 rounded-lg w-fit">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "px-4 py-2 text-sm font-medium rounded-md transition-all",
-                activeTab === tab.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Tabs - Scrollable on mobile */}
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+          <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg w-fit min-w-max">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "px-3 md:px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap",
+                  activeTab === tab.id
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Controls Row */}
@@ -243,14 +248,14 @@ const Index = () => {
           </div>
 
           {/* Right: Search and Filter Toggle */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto">
+            <div className="relative flex-1 md:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Cari nama pengguna..."
+                placeholder="Cari nama..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9 w-[220px] bg-background border-input"
+                className="pl-9 h-9 w-full md:w-[220px] bg-background border-input"
               />
             </div>
 
@@ -261,7 +266,7 @@ const Index = () => {
               onClick={() => setFilterPanelOpen(!filterPanelOpen)}
             >
               <SlidersHorizontal className="h-4 w-4" />
-              Filter
+              <span className="hidden sm:inline">Filter</span>
             </Button>
           </div>
         </div>
@@ -413,42 +418,42 @@ const Index = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="px-4 py-4 text-left w-12">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left w-10 md:w-12">
                     <Checkbox
                       checked={selectedItems.length === paginatedData.length && paginatedData.length > 0}
                       onCheckedChange={handleSelectAll}
                       className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                   </th>
-                  <th className="px-4 py-4 text-left">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left min-w-[80px]">
                     <button className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
                       ID Tes
                       <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
-                  <th className="px-4 py-4 text-left">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left min-w-[140px]">
                     <button className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
-                      Nama Pengguna
+                      Nama
                       <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
-                  <th className="px-4 py-4 text-left">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left min-w-[120px] hidden md:table-cell">
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Kategori Tes
+                      Kategori
                     </span>
                   </th>
-                  <th className="px-4 py-4 text-left">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left min-w-[100px]">
                     <button className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
                       Status
                       <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
-                  <th className="px-4 py-4 text-left">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-left min-w-[70px]">
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Hasil Tes
+                      Hasil
                     </span>
                   </th>
-                  <th className="px-4 py-4 text-center w-24">
+                  <th className="px-3 md:px-4 py-3 md:py-4 text-center w-20 md:w-24">
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Aksi
                     </span>
@@ -464,47 +469,47 @@ const Index = () => {
                       selectedItems.includes(item.id) && "bg-primary/5"
                     )}
                   >
-                    <td className="px-4 py-4">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
                       <Checkbox
                         checked={selectedItems.includes(item.id)}
                         onCheckedChange={(checked) => handleSelectItem(item.id, checked as boolean)}
                         className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm font-medium text-muted-foreground">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
+                      <span className="text-xs md:text-sm font-medium text-muted-foreground">
                         #{item.id}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm font-medium text-foreground">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
+                      <span className="text-xs md:text-sm font-medium text-foreground">
                         {item.name}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm text-muted-foreground">
+                    <td className="px-3 md:px-4 py-3 md:py-4 hidden md:table-cell">
+                      <span className="text-xs md:text-sm text-muted-foreground">
                         {item.category}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
                       <span className={cn(
-                        "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium",
+                        "inline-flex items-center px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-xs font-medium",
                         getStatusStyle(item.status)
                       )}>
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm font-semibold text-foreground">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
+                      <span className="text-xs md:text-sm font-semibold text-foreground">
                         {item.result}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-3 md:px-4 py-3 md:py-4">
                       <div className="flex items-center justify-center gap-1">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10 rounded-full"
+                          className="h-7 w-7 md:h-8 md:w-8 text-primary hover:text-primary hover:bg-primary/10 rounded-full"
                           onClick={() => handleViewDetail(item)}
                         >
                           <Eye className="h-4 w-4" />
@@ -512,7 +517,7 @@ const Index = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
+                          className="h-7 w-7 md:h-8 md:w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
                           onClick={() => handleDelete(item.name)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -526,12 +531,12 @@ const Index = () => {
           </div>
 
           {/* Pagination Footer */}
-          <div className="px-4 py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Left: Go to page */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Tampilkan</span>
+          <div className="px-3 md:px-4 py-3 md:py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4">
+            {/* Left: Items per page */}
+            <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+              <span className="hidden sm:inline">Tampilkan</span>
               <Select value={itemsPerPage.toString()} onValueChange={(v) => setItemsPerPage(Number(v))}>
-                <SelectTrigger className="w-[65px] h-8 bg-background">
+                <SelectTrigger className="w-[60px] md:w-[65px] h-7 md:h-8 bg-background text-xs md:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
@@ -541,17 +546,17 @@ const Index = () => {
                   <SelectItem value="100">100</SelectItem>
                 </SelectContent>
               </Select>
-              <span>dari {totalData} data</span>
+              <span>/ {totalData}</span>
             </div>
 
             {/* Center: Navigation */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="h-9 w-9 rounded-full"
+                className="h-8 w-8 md:h-9 md:w-9 rounded-full"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -559,15 +564,16 @@ const Index = () => {
               <Button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="h-9 px-5 gap-2 rounded-full"
+                className="h-8 md:h-9 px-3 md:px-5 gap-1 md:gap-2 rounded-full text-xs md:text-sm"
               >
-                Next Page
+                <span className="hidden sm:inline">Next Page</span>
+                <span className="sm:hidden">Next</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Right: Page indicator */}
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="text-muted-foreground">Page</span>
               <Input 
                 type="text"
@@ -578,9 +584,9 @@ const Index = () => {
                     setCurrentPage(val);
                   }
                 }}
-                className="w-12 h-8 text-center bg-background"
+                className="w-10 md:w-12 h-7 md:h-8 text-center bg-background text-xs md:text-sm"
               />
-              <span className="text-muted-foreground">of {totalPages}</span>
+              <span className="text-muted-foreground">/ {totalPages}</span>
             </div>
           </div>
         </div>

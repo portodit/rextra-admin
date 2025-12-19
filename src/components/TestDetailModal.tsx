@@ -179,13 +179,13 @@ export function TestDetailModal({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-card p-6">
+      <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-card p-4 sm:p-6">
         <SheetHeader className="pb-4 border-b border-border">
-          <SheetTitle className="text-xl font-bold text-foreground">
+          <SheetTitle className="text-lg sm:text-xl font-bold text-foreground">
             Detail Hasil Tes Profil Karier
           </SheetTitle>
-          <SheetDescription className="text-sm text-muted-foreground">
-            Menampilkan data hasil tes Profil Karier pengguna yang meliputi informasi ID tes, pengguna, waktu tes, status tes, hasil tes, dan peringkat RIASEC.
+          <SheetDescription className="text-xs sm:text-sm text-muted-foreground">
+            Menampilkan data hasil tes Profil Karier pengguna.
           </SheetDescription>
         </SheetHeader>
 
@@ -194,59 +194,59 @@ export function TestDetailModal({
           <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-4">
             Informasi Umum
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {/* Row 1 */}
-            <div className="flex items-center py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 border-b border-border/50 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <Hash className="h-4 w-4" />
-                <span className="text-sm">ID Tes</span>
+                <span className="text-xs sm:text-sm">ID Tes</span>
               </div>
-              <span className="text-sm font-medium text-foreground">{testData.id}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground pl-6 sm:pl-0">{testData.id}</span>
             </div>
 
             {/* Row 2 */}
-            <div className="flex items-center py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 border-b border-border/50 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <User className="h-4 w-4" />
-                <span className="text-sm">Nama Pengguna</span>
+                <span className="text-xs sm:text-sm">Nama Pengguna</span>
               </div>
-              <span className="text-sm font-medium text-foreground">{testData.userName}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground pl-6 sm:pl-0">{testData.userName}</span>
             </div>
 
             {/* Row 3 */}
-            <div className="flex items-center py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 border-b border-border/50 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <Clock className="h-4 w-4" />
-                <span className="text-sm">Waktu Mulai</span>
+                <span className="text-xs sm:text-sm">Waktu Mulai</span>
               </div>
-              <span className="text-sm font-medium text-foreground">{testData.startTime}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground pl-6 sm:pl-0">{testData.startTime}</span>
             </div>
 
             {/* Row 4 */}
-            <div className="flex items-center py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 border-b border-border/50 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <CheckCircle className="h-4 w-4" />
-                <span className="text-sm">Waktu Selesai</span>
+                <span className="text-xs sm:text-sm">Waktu Selesai</span>
               </div>
-              <span className="text-sm font-medium text-foreground">{testData.endTime}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground pl-6 sm:pl-0">{testData.endTime}</span>
             </div>
 
             {/* Row 5 */}
-            <div className="flex items-center py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 border-b border-border/50 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <Activity className="h-4 w-4" />
-                <span className="text-sm">Status Tes</span>
+                <span className="text-xs sm:text-sm">Status Tes</span>
               </div>
-              {getStatusBadge(testData.status)}
+              <div className="pl-6 sm:pl-0">{getStatusBadge(testData.status)}</div>
             </div>
 
             {/* Row 6 */}
-            <div className="flex items-center py-2">
-              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center py-2 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 sm:w-40 text-muted-foreground">
                 <Target className="h-4 w-4" />
-                <span className="text-sm">Hasil Tes</span>
+                <span className="text-xs sm:text-sm">Hasil Tes</span>
               </div>
-              <span className="text-sm font-semibold text-primary">{testData.result}</span>
+              <span className="text-xs sm:text-sm font-semibold text-primary pl-6 sm:pl-0">{testData.result}</span>
             </div>
           </div>
         </div>
