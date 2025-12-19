@@ -115,9 +115,10 @@ const SidebarDropdownItem = ({
 
 interface AppSidebarProps {
   className?: string;
+  onClose?: () => void;
 }
 
-export function AppSidebar({ className }: AppSidebarProps) {
+export function AppSidebar({ className, onClose }: AppSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<string[]>(["kenali-diri"]);
   const location = useLocation();
@@ -130,17 +131,21 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
   const isDropdownOpen = (id: string) => openDropdowns.includes(id);
 
+  // On mobile, always show full sidebar (not collapsed)
+  const isMobileView = typeof window !== 'undefined' && window.innerWidth < 1024;
+  const effectiveCollapsed = isMobileView ? false : isCollapsed;
+
   return (
     <aside
       className={cn(
         "h-screen bg-background border-r border-border flex flex-col transition-all duration-300",
-        isCollapsed ? "w-[72px]" : "w-[260px]",
+        effectiveCollapsed ? "w-[72px]" : "w-[260px]",
         className
       )}
     >
       {/* Logo Section */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-        {!isCollapsed ? (
+        {!effectiveCollapsed ? (
           <>
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -148,8 +153,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
               </div>
               <span className="font-semibold text-foreground">REXTRA</span>
             </div>
+            {/* Hide collapse button on mobile */}
             <button
-              onClick={() => setIsCollapsed(true)}
+              onClick={() => onClose ? onClose() : setIsCollapsed(true)}
               className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
             >
               <ChevronLeft className="h-4 w-4 text-muted-foreground" />
@@ -174,7 +180,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
       <nav className="flex-1 overflow-y-auto p-3 space-y-6">
         {/* Category 1: Fitur Mahasiswa */}
         <div>
-          {!isCollapsed && (
+          {!effectiveCollapsed && (
             <h3 className="px-3 mb-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
               Fitur Mahasiswa
             </h3>
@@ -184,27 +190,27 @@ export function AppSidebar({ className }: AppSidebarProps) {
               icon={User}
               label="Akun Mahasiswa"
               href="/akun-mahasiswa"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/akun-mahasiswa"}
             />
             <SidebarItem
               icon={Fingerprint}
               label="Persona REXTRA"
               href="/persona-rextra"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/persona-rextra"}
             />
             <SidebarItem
               icon={GraduationCap}
               label="Pendidikan"
               href="/pendidikan"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/pendidikan"}
             />
             <SidebarItem
               icon={Users}
               label="REXTRA CLUB"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               hasDropdown
               isOpen={isDropdownOpen("rextra-club")}
               onToggle={() => toggleDropdown("rextra-club")}
@@ -223,7 +229,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
             <SidebarItem
               icon={Brain}
               label="Kenali Diri"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               hasDropdown
               isOpen={isDropdownOpen("kenali-diri")}
               onToggle={() => toggleDropdown("kenali-diri")}
@@ -250,7 +256,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
         {/* Category 2: Fitur Perusahaan */}
         <div>
-          {!isCollapsed && (
+          {!effectiveCollapsed && (
             <h3 className="px-3 mb-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
               Fitur Perusahaan
             </h3>
@@ -260,14 +266,14 @@ export function AppSidebar({ className }: AppSidebarProps) {
               icon={Building2}
               label="Profil Perusahaan"
               href="/profil-perusahaan"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/profil-perusahaan"}
             />
             <SidebarItem
               icon={FileText}
               label="Lowongan Kerja"
               href="/lowongan-kerja"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/lowongan-kerja"}
             />
           </div>
@@ -275,7 +281,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
         {/* Category 3: Performa Usaha */}
         <div>
-          {!isCollapsed && (
+          {!effectiveCollapsed && (
             <h3 className="px-3 mb-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
               Performa Usaha
             </h3>
@@ -285,21 +291,21 @@ export function AppSidebar({ className }: AppSidebarProps) {
               icon={Trophy}
               label="Capaian Pengguna"
               href="/capaian-pengguna"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/capaian-pengguna"}
             />
             <SidebarItem
               icon={DollarSign}
               label="Capaian Keuangan"
               href="/capaian-keuangan"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/capaian-keuangan"}
             />
             <SidebarItem
               icon={BarChart3}
               label="Visualisasi Performa"
               href="/visualisasi-performa"
-              isCollapsed={isCollapsed}
+              isCollapsed={effectiveCollapsed}
               isActive={location.pathname === "/visualisasi-performa"}
             />
           </div>
@@ -307,7 +313,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
       </nav>
 
       {/* Footer */}
-      {!isCollapsed && (
+      {!effectiveCollapsed && (
         <div className="p-4 border-t border-border">
           <p className="text-xs text-muted-foreground/60 text-center">
             © 2025 REXTRA Admin
