@@ -1,11 +1,11 @@
 import * as React from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -178,16 +178,16 @@ export function TestDetailModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-card">
-        <DialogHeader className="pb-4 border-b border-border">
-          <DialogTitle className="text-xl font-bold text-foreground">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-card p-6">
+        <SheetHeader className="pb-4 border-b border-border">
+          <SheetTitle className="text-xl font-bold text-foreground">
             Detail Hasil Tes Profil Karier
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
+          </SheetTitle>
+          <SheetDescription className="text-sm text-muted-foreground">
             Menampilkan data hasil tes Profil Karier pengguna yang meliputi informasi ID tes, pengguna, waktu tes, status tes, hasil tes, dan peringkat RIASEC.
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
         {/* Section: Informasi Umum - Vertical 5 rows x 2 columns */}
         <div className="mt-6">
@@ -442,7 +442,7 @@ export function TestDetailModal({
             Tutup
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
