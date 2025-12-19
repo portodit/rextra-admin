@@ -187,70 +187,64 @@ export function TestDetailModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Section: Informasi Umum */}
+        {/* Section: Informasi Umum - Vertical 5 rows x 2 columns */}
         <div className="mt-6">
           <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-4">
             Informasi Umum
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-primary/10">
-                <Hash className="h-4 w-4 text-primary" />
+          <div className="space-y-3">
+            {/* Row 1 */}
+            <div className="flex items-center py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <Hash className="h-4 w-4" />
+                <span className="text-sm">ID Tes</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">ID Tes</p>
-                <p className="text-sm font-semibold text-foreground">{testData.id}</p>
-              </div>
+              <span className="text-sm font-medium text-foreground">{testData.id}</span>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-primary/10">
-                <User className="h-4 w-4 text-primary" />
+            {/* Row 2 */}
+            <div className="flex items-center py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <User className="h-4 w-4" />
+                <span className="text-sm">Nama Pengguna</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Nama Pengguna</p>
-                <p className="text-sm font-semibold text-foreground">{testData.userName}</p>
-              </div>
+              <span className="text-sm font-medium text-foreground">{testData.userName}</span>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-emerald-500/10">
-                <Clock className="h-4 w-4 text-emerald-600" />
+            {/* Row 3 */}
+            <div className="flex items-center py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span className="text-sm">Waktu Mulai</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Waktu Mulai</p>
-                <p className="text-sm font-semibold text-foreground">{testData.startTime}</p>
-              </div>
+              <span className="text-sm font-medium text-foreground">{testData.startTime}</span>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-emerald-500/10">
-                <CheckCircle className="h-4 w-4 text-emerald-600" />
+            {/* Row 4 */}
+            <div className="flex items-center py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-sm">Waktu Selesai</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Waktu Selesai</p>
-                <p className="text-sm font-semibold text-foreground">{testData.endTime}</p>
-              </div>
+              <span className="text-sm font-medium text-foreground">{testData.endTime}</span>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-primary/10">
-                <Award className="h-4 w-4 text-primary" />
+            {/* Row 5 */}
+            <div className="flex items-center py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <Award className="h-4 w-4" />
+                <span className="text-sm">Status Tes</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Status Tes</p>
-                <div className="mt-1">{getStatusBadge(testData.status)}</div>
-              </div>
+              {getStatusBadge(testData.status)}
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <div className="p-2 rounded-md bg-primary/10">
-                <Award className="h-4 w-4 text-primary" />
+            {/* Row 6 */}
+            <div className="flex items-center py-2">
+              <div className="flex items-center gap-2 w-40 text-muted-foreground">
+                <Award className="h-4 w-4" />
+                <span className="text-sm">Hasil Tes</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Hasil Tes</p>
-                <p className="text-sm font-semibold text-foreground">{testData.result}</p>
-              </div>
+              <span className="text-sm font-semibold text-primary">{testData.result}</span>
             </div>
           </div>
         </div>
@@ -262,22 +256,22 @@ export function TestDetailModal({
           </h3>
 
           <Tabs defaultValue="riasec" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="bg-transparent border-b border-border w-full justify-start gap-6 h-auto p-0 mb-6">
               <TabsTrigger
                 value="riasec"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground"
               >
                 RIASEC
               </TabsTrigger>
               <TabsTrigger
                 value="ikigai"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground"
               >
                 IKIGAI
               </TabsTrigger>
               <TabsTrigger
                 value="rekomendasi"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground"
               >
                 Rekomendasi
               </TabsTrigger>
