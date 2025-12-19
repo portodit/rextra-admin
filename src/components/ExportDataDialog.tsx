@@ -129,56 +129,59 @@ export function ExportDataDialog({ open, onOpenChange }: ExportDataDialogProps) 
         </DialogHeader>
 
         <div className="space-y-5">
-          {/* Category Dropdown */}
-          <div className="space-y-2">
-            <Label htmlFor="category" className="text-sm font-medium text-foreground">
-              Kategori Tes
-            </Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger 
-                id="category"
-                className="w-full h-11 bg-background border-input hover:border-primary/50 transition-colors"
-              >
-                <SelectValue placeholder="Pilih kategori tes" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border shadow-custom-lg">
-                {testCategories.map((cat) => (
-                  <SelectItem 
-                    key={cat.value} 
-                    value={cat.value}
-                    className="cursor-pointer hover:bg-accent focus:bg-accent"
-                  >
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Category & Status Row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Category Dropdown */}
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-sm font-medium text-foreground">
+                Kategori Tes
+              </Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger 
+                  id="category"
+                  className="w-full h-11 bg-background border-input hover:border-primary/50 transition-colors"
+                >
+                  <SelectValue placeholder="Pilih kategori tes" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border shadow-custom-lg">
+                  {testCategories.map((cat) => (
+                    <SelectItem 
+                      key={cat.value} 
+                      value={cat.value}
+                      className="cursor-pointer hover:bg-accent focus:bg-accent"
+                    >
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Status Dropdown */}
-          <div className="space-y-2">
-            <Label htmlFor="status" className="text-sm font-medium text-foreground">
-              Status Tes
-            </Label>
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger 
-                id="status"
-                className="w-full h-11 bg-background border-input hover:border-primary/50 transition-colors"
-              >
-                <SelectValue placeholder="Pilih status tes" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border shadow-custom-lg">
-                {testStatuses.map((stat) => (
-                  <SelectItem 
-                    key={stat.value} 
-                    value={stat.value}
-                    className="cursor-pointer hover:bg-accent focus:bg-accent"
-                  >
-                    {stat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Status Dropdown */}
+            <div className="space-y-2">
+              <Label htmlFor="status" className="text-sm font-medium text-foreground">
+                Status Tes
+              </Label>
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger 
+                  id="status"
+                  className="w-full h-11 bg-background border-input hover:border-primary/50 transition-colors"
+                >
+                  <SelectValue placeholder="Pilih status tes" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border shadow-custom-lg">
+                  {testStatuses.map((stat) => (
+                    <SelectItem 
+                      key={stat.value} 
+                      value={stat.value}
+                      className="cursor-pointer hover:bg-accent focus:bg-accent"
+                    >
+                      {stat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Date Range Section */}
