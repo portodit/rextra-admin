@@ -355,69 +355,68 @@ export default function UmpanBalik() {
           </Button>
         </div>
 
-        {/* Button Group: Data Mentah vs Visualisasi */}
+        {/* Button Group: Mahasiswa vs Validator */}
         <div className="inline-flex p-1 rounded-lg bg-muted/60 border border-border/50">
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setSubTab("data-mentah")}
+            onClick={() => setMainTab("mahasiswa")}
             className={`rounded-md px-4 transition-all ${
-              subTab === "data-mentah"
+              mainTab === "mahasiswa"
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
             }`}
           >
-            Data Mentah
+            Mahasiswa
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setSubTab("visualisasi")}
+            onClick={() => setMainTab("validator")}
             className={`rounded-md px-4 transition-all ${
-              subTab === "visualisasi"
+              mainTab === "validator"
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
             }`}
           >
-            Visualisasi
+            Validator
           </Button>
-        </div>
-
-        {/* Tab Menu: Mahasiswa vs Validator */}
-        <div className="border-b border-border">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setMainTab("mahasiswa")}
-              className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-                mainTab === "mahasiswa"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Mahasiswa
-              {mainTab === "mahasiswa" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
-              )}
-            </button>
-            <button
-              onClick={() => setMainTab("validator")}
-              className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-                mainTab === "validator"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Validator
-              {mainTab === "validator" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
-              )}
-            </button>
-          </div>
         </div>
 
         {/* Content based on main tab */}
         {mainTab === "mahasiswa" ? (
           <div className="space-y-6">
+            {/* Tab Menu: Data Mentah vs Visualisasi */}
+            <div className="border-b border-border">
+              <div className="flex gap-6">
+                <button
+                  onClick={() => setSubTab("data-mentah")}
+                  className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
+                    subTab === "data-mentah"
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Data Mentah
+                  {subTab === "data-mentah" && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setSubTab("visualisasi")}
+                  className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
+                    subTab === "visualisasi"
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Visualisasi
+                  {subTab === "visualisasi" && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+                  )}
+                </button>
+              </div>
+            </div>
 
             {subTab === "data-mentah" ? (
               <>
