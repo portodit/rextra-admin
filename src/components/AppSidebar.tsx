@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import logoRextra from "@/assets/logo-rextra.png";
 import {
   ChevronLeft,
   ChevronRight,
@@ -157,10 +158,7 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
         {!effectiveCollapsed ? (
           <>
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">R</span>
-              </div>
-              <span className="font-semibold text-foreground">REXTRA</span>
+              <img src={logoRextra} alt="REXTRA Logo" className="h-8 object-contain" />
             </div>
             {/* Mobile: X button to close, Desktop: Collapse button */}
             {onClose ? (
@@ -181,9 +179,7 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
           </>
         ) : (
           <div className="flex flex-col items-center gap-2 w-full">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">R</span>
-            </div>
+            <img src={logoRextra} alt="REXTRA Logo" className="h-8 w-8 object-contain" />
             <button
               onClick={() => setIsCollapsed(false)}
               className="h-6 w-6 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
