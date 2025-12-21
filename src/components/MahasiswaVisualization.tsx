@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -7,11 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   BarChart,
   Bar,
@@ -557,7 +553,7 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     </div>
   );
 
-  // Structured Insight Component with collapsible
+  // Structured Insight Component with collapsible and framer-motion
   const StructuredInsight = ({ insight }: { insight: { ringkasan: string; detail: string; implikasi: string; aksi: string; catatan?: string } }) => {
     const [isOpen, setIsOpen] = useState(false);
     
@@ -569,22 +565,63 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
           </div>
           <div className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed flex-1">
             <p className="font-medium">{insight.ringkasan}</p>
-            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 mt-2 font-medium transition-colors">
-                <span>{isOpen ? "Sembunyikan detail" : "Lihat detail lengkap"}</span>
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
-                <p><strong>Detail:</strong> {insight.detail}</p>
-                <p><strong>Implikasi:</strong> {insight.implikasi}</p>
-                <p><strong>Aksi Prioritas:</strong> {insight.aksi}</p>
-                {insight.catatan && (
-                  <p className="mt-2 text-amber-700 dark:text-amber-300 italic text-xs">
-                    <strong>Catatan:</strong> {insight.catatan}
-                  </p>
-                )}
-              </CollapsibleContent>
-            </Collapsible>
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 mt-2 font-medium transition-colors"
+            >
+              <span>{isOpen ? "Sembunyikan detail" : "Lihat detail lengkap"}</span>
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </motion.div>
+            </button>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 space-y-2 pt-1">
+                    <motion.p
+                      initial={{ y: -10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.05 }}
+                    >
+                      <strong>Detail:</strong> {insight.detail}
+                    </motion.p>
+                    <motion.p
+                      initial={{ y: -10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <strong>Implikasi:</strong> {insight.implikasi}
+                    </motion.p>
+                    <motion.p
+                      initial={{ y: -10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.15 }}
+                    >
+                      <strong>Aksi Prioritas:</strong> {insight.aksi}
+                    </motion.p>
+                    {insight.catatan && (
+                      <motion.p 
+                        className="mt-2 text-amber-700 dark:text-amber-300 italic text-xs"
+                        initial={{ y: -10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <strong>Catatan:</strong> {insight.catatan}
+                      </motion.p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
