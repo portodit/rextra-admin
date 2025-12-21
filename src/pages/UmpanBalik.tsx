@@ -35,6 +35,7 @@ import {
 import { ExportDataDialog } from "@/components/ExportDataDialog";
 import { FeedbackDetailModal } from "@/components/FeedbackDetailModal";
 import { FeedbackCharts } from "@/components/FeedbackCharts";
+import { MahasiswaVisualization } from "@/components/MahasiswaVisualization";
 
 // Mock data for Mahasiswa feedback (Likert 1-7)
 const mahasiswaFeedbackData = [
@@ -610,7 +611,10 @@ export default function UmpanBalik() {
               </>
             ) : (
               // Visualisasi Tab
-              <FeedbackCharts data={validatorFeedbackData} />
+              <MahasiswaVisualization 
+                selectedCategory={selectedCategory} 
+                onCategoryChange={setSelectedCategory} 
+              />
             )}
           </div>
         ) : (
