@@ -12,7 +12,6 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   PieChart,
@@ -59,15 +58,14 @@ const previousPeriodData = {
   avgKepuasan: 4.9,
 };
 
-const CHART_COLORS = {
-  primary: "hsl(var(--primary))",
-  success: "hsl(var(--success))",
-  warning: "hsl(var(--warning))",
-  destructive: "hsl(var(--destructive))",
-  muted: "hsl(var(--muted))",
+// Modern vibrant colors
+const COLORS = {
+  blue: "#6366F1",
+  green: "#22C55E", 
+  amber: "#F59E0B",
+  red: "#EF4444",
+  purple: "#A855F7",
 };
-
-const DONUT_COLORS = ["hsl(var(--success))", "hsl(var(--destructive))"];
 
 interface MahasiswaVisualizationProps {
   selectedCategory: string;
@@ -84,7 +82,6 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     const avgRelevansi = mahasiswaFeedbackData.reduce((sum, d) => sum + d.relevansiRekomendasi, 0) / total;
     const avgKepuasan = mahasiswaFeedbackData.reduce((sum, d) => sum + d.kepuasanFitur, 0) / total;
 
-    // Trend calculations
     const totalTrend = ((total - previousPeriodData.totalFeedback) / previousPeriodData.totalFeedback) * 100;
     const kemudahanTrend = ((avgKemudahan - previousPeriodData.avgKemudahan) / previousPeriodData.avgKemudahan) * 100;
     const relevansiTrend = ((avgRelevansi - previousPeriodData.avgRelevansi) / previousPeriodData.avgRelevansi) * 100;
@@ -102,12 +99,18 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     };
   }, []);
 
-  // Prepare chart data for Likert scale distribution
-  const prepareDistributionData = (key: "kemudahanTes" | "relevansiRekomendasi" | "kepuasanFitur") => {
-    return [1, 2, 3, 4, 5, 6, 7].map((score) => ({
+  // Prepare chart data with highlight for max value
+  const prepareDistributionData = (key: "kemudahanTes" | "relevansiRekomendasi" | "kepuasanFitur", highlightColor: string) => {
+    const data = [1, 2, 3, 4, 5, 6, 7].map((score) => ({
       score: score.toString(),
-      label: score === 1 ? "1 (Sangat Tidak Setuju)" : score === 7 ? "7 (Sangat Setuju)" : score.toString(),
       count: mahasiswaFeedbackData.filter((d) => d[key] === score).length,
+    }));
+    
+    const maxCount = Math.max(...data.map(d => d.count));
+    
+    return data.map(d => ({
+      ...d,
+      fill: d.count === maxCount && d.count > 0 ? highlightColor : `${highlightColor}30`,
     }));
   };
 
@@ -123,18 +126,28 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     const hasKendala = mahasiswaFeedbackData.length - noKendala;
     
     const kendalaTypes: Record<string, number> = {
-      "Durasi tes terasa terlalu lama": 0,
-      "Ada pertanyaan yang membingungkan": 0,
-      "Mengalami error/bug (macet, loading lama, atau tidak bisa lanjut)": 0,
-      "Penjelasan hasil tes terlalu panjang atau sulit dipahami": 0,
-      "Tampilan atau navigasi membingungkan": 0,
+      "Durasi tes terlalu lama": 0,
+      "Pertanyaan membingungkan": 0,
+      "Error/bug sistem": 0,
+      "Penjelasan sulit dipahami": 0,
+      "Navigasi membingungkan": 0,
       "Kendala lainnya": 0,
+    };
+
+    const kendalaMap: Record<string, string> = {
+      "Durasi tes terasa terlalu lama": "Durasi tes terlalu lama",
+      "Ada pertanyaan yang membingungkan": "Pertanyaan membingungkan",
+      "Mengalami error/bug (macet, loading lama, atau tidak bisa lanjut)": "Error/bug sistem",
+      "Penjelasan hasil tes terlalu panjang atau sulit dipahami": "Penjelasan sulit dipahami",
+      "Tampilan atau navigasi membingungkan": "Navigasi membingungkan",
+      "Kendala lainnya": "Kendala lainnya",
     };
 
     mahasiswaFeedbackData.forEach((d) => {
       d.kendala.forEach((k) => {
-        if (kendalaTypes.hasOwnProperty(k)) {
-          kendalaTypes[k]++;
+        const mapped = kendalaMap[k];
+        if (mapped && kendalaTypes.hasOwnProperty(mapped)) {
+          kendalaTypes[mapped]++;
         }
       });
     });
@@ -142,12 +155,17 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     const kendalaData = Object.entries(kendalaTypes)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
+    
+    const maxKendala = Math.max(...kendalaData.map(d => d.count));
 
     return {
       noKendala,
       hasKendala,
       hasKendalaPercentage: Math.round((hasKendala / mahasiswaFeedbackData.length) * 100),
-      kendalaData,
+      kendalaData: kendalaData.map(d => ({
+        ...d,
+        fill: d.count === maxKendala && d.count > 0 ? COLORS.red : `${COLORS.red}30`,
+      })),
     };
   }, []);
 
@@ -168,46 +186,53 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     title, 
     value, 
     trend, 
-    trendData 
+    trendData,
+    accentColor 
   }: { 
     icon: React.ElementType; 
     title: string; 
     value: string | number; 
     trend: string; 
     trendData: { value: number }[];
+    accentColor: string;
   }) => {
     const trendNumber = parseFloat(trend);
     const isPositive = trendNumber >= 0;
 
     return (
-      <Card className="border border-border/60 rounded-xl p-4 md:p-5 relative overflow-hidden">
+      <Card className="border-0 bg-gradient-to-br from-card to-muted/30 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
         <div className="relative z-10 space-y-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Icon className="h-4 w-4 text-primary" />
+            <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${accentColor}15` }}>
+              <Icon className="h-4 w-4" style={{ color: accentColor }} />
             </div>
             <span className="text-sm text-muted-foreground font-bold">{title}</span>
           </div>
-          <div className="space-y-1">
-            <p className="text-2xl md:text-3xl font-bold text-foreground">{value}</p>
-            <div className={`flex items-center gap-1 text-xs ${isPositive ? "text-success" : "text-destructive"}`}>
-              {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+          <div className="space-y-1.5">
+            <p className="text-3xl font-bold text-foreground">{value}</p>
+            <div className={`flex items-center gap-1.5 text-xs font-medium ${isPositive ? "text-emerald-500" : "text-rose-500"}`}>
+              {isPositive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
               <span>
                 {isPositive ? "Naik" : "Turun"} {Math.abs(trendNumber)}% dibanding minggu lalu
               </span>
             </div>
           </div>
         </div>
-        {/* Mini chart positioned at bottom right */}
-        <div className="absolute bottom-0 right-0 w-28 h-16 opacity-60">
+        <div className="absolute bottom-0 right-0 w-32 h-20 opacity-50">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`gradient-${accentColor.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={accentColor} stopOpacity={0.4} />
+                  <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
               <Area 
                 type="monotone" 
                 dataKey="value" 
-                stroke={isPositive ? "hsl(var(--success))" : "hsl(var(--destructive))"} 
-                fill={isPositive ? "hsl(var(--success) / 0.3)" : "hsl(var(--destructive) / 0.3)"} 
-                strokeWidth={2}
+                stroke={accentColor}
+                fill={`url(#gradient-${accentColor.replace('#', '')})`}
+                strokeWidth={2.5}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -218,80 +243,118 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
 
   // Insight Box Component
   const InsightBox = ({ children }: { children: React.ReactNode }) => (
-    <div className="mt-4 p-4 bg-muted/50 border border-muted-foreground/20 rounded-lg">
-      <div className="flex items-start gap-2">
-        <Lightbulb className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
-        <p className="text-sm text-muted-foreground">{children}</p>
+    <div className="mt-5 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/30 rounded-xl">
+      <div className="flex items-start gap-3">
+        <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50">
+          <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        </div>
+        <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">{children}</p>
       </div>
     </div>
   );
 
-  // Custom Tooltip for charts
+  // Modern Tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground">Skor {label}</p>
-          <p className="text-sm text-muted-foreground">{payload[0].value} respon</p>
+        <div className="bg-foreground text-background px-4 py-2.5 rounded-xl shadow-xl">
+          <p className="text-sm font-semibold">Skor {label}</p>
+          <p className="text-xs opacity-80">{payload[0].value} respon</p>
         </div>
       );
     }
     return null;
   };
 
+  // Custom bar shape with rounded corners
+  const RoundedBar = (props: any) => {
+    const { x, y, width, height, fill } = props;
+    const radius = 8;
+    
+    if (height <= 0) return null;
+    
+    return (
+      <g>
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={fill}
+          rx={radius}
+          ry={radius}
+          style={{ filter: fill.length < 10 ? 'url(#glow)' : 'none' }}
+        />
+      </g>
+    );
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-xl md:text-2xl font-bold text-foreground">
+        <h2 className="text-2xl font-bold text-foreground">
           Visualisasi Data Umpan Balik
         </h2>
-        <p className="text-sm md:text-base text-muted-foreground mt-1">
+        <p className="text-muted-foreground mt-1">
           Ringkasan visual untuk memahami tren kemudahan, relevansi rekomendasi, kepuasan, dan kendala penggunaan.
         </p>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <OverviewCard
           icon={MessageSquareText}
           title="Total Feedback"
           value={stats.total}
           trend={stats.totalTrend}
           trendData={miniTrendData}
+          accentColor={COLORS.purple}
         />
         <OverviewCard
           icon={ThumbsUp}
-          title="Rata-rata Kemudahan Tes"
+          title="Rata-rata Kemudahan"
           value={`${stats.avgKemudahan}/7`}
           trend={stats.kemudahanTrend}
           trendData={miniTrendData}
+          accentColor={COLORS.blue}
         />
         <OverviewCard
           icon={Target}
-          title="Rata-rata Relevansi Rekomendasi"
+          title="Rata-rata Relevansi"
           value={`${stats.avgRelevansi}/7`}
           trend={stats.relevansiTrend}
           trendData={miniTrendData}
+          accentColor={COLORS.green}
         />
         <OverviewCard
           icon={Smile}
-          title="Rata-rata Kepuasan Keseluruhan"
+          title="Rata-rata Kepuasan"
           value={`${stats.avgKepuasan}/7`}
           trend={stats.kepuasanTrend}
           trendData={miniTrendData}
+          accentColor={COLORS.amber}
         />
       </div>
 
       {/* Control Section */}
-      <Card className="border-border/50">
+      <Card className="border-0 bg-card/50 backdrop-blur rounded-2xl shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-semibold">Kontrol Visualisasi</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-3">
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className="w-full md:w-[200px]">
+              <SelectTrigger className="w-full md:w-[200px] rounded-xl border-border/50">
                 <SelectValue placeholder="Pilih Kategori Tes" />
               </SelectTrigger>
               <SelectContent>
@@ -301,7 +364,7 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
               </SelectContent>
             </Select>
             <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-full md:w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px] rounded-xl border-border/50">
                 <SelectValue placeholder="Rentang Waktu" />
               </SelectTrigger>
               <SelectContent>
@@ -317,24 +380,31 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Tingkat Kemudahan */}
-        <Card className="border-border/50">
+        <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Tingkat Kemudahan Menyelesaikan Tes</CardTitle>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="w-1 h-5 rounded-full" style={{ backgroundColor: COLORS.blue }} />
+              Tingkat Kemudahan Menyelesaikan Tes
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={prepareDistributionData("kemudahanTes")} margin={{ top: 10, right: 10, left: -10, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <BarChart data={prepareDistributionData("kemudahanTes", COLORS.blue)} margin={{ top: 20, right: 20, left: 0, bottom: 30 }}>
                   <XAxis 
                     dataKey="score" 
-                    tick={{ fontSize: 11 }} 
-                    className="text-muted-foreground"
-                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 0, fontSize: 11 }}
+                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 10, fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                   />
-                  <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill={CHART_COLORS.primary} radius={[4, 4, 0, 0]} />
+                  <YAxis 
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted)/0.3)', radius: 8 }} />
+                  <Bar dataKey="count" shape={<RoundedBar />} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -345,24 +415,31 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
         </Card>
 
         {/* Chart 2: Tingkat Relevansi */}
-        <Card className="border-border/50">
+        <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Tingkat Relevansi Rekomendasi Profesi</CardTitle>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="w-1 h-5 rounded-full" style={{ backgroundColor: COLORS.green }} />
+              Tingkat Relevansi Rekomendasi Profesi
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={prepareDistributionData("relevansiRekomendasi")} margin={{ top: 10, right: 10, left: -10, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <BarChart data={prepareDistributionData("relevansiRekomendasi", COLORS.green)} margin={{ top: 20, right: 20, left: 0, bottom: 30 }}>
                   <XAxis 
                     dataKey="score" 
-                    tick={{ fontSize: 11 }} 
-                    className="text-muted-foreground"
-                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 0, fontSize: 11 }}
+                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 10, fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                   />
-                  <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill={CHART_COLORS.success} radius={[4, 4, 0, 0]} />
+                  <YAxis 
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted)/0.3)', radius: 8 }} />
+                  <Bar dataKey="count" shape={<RoundedBar />} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -373,24 +450,31 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
         </Card>
 
         {/* Chart 3: Tingkat Kepuasan */}
-        <Card className="border-border/50">
+        <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Tingkat Kepuasan Keseluruhan</CardTitle>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="w-1 h-5 rounded-full" style={{ backgroundColor: COLORS.amber }} />
+              Tingkat Kepuasan Keseluruhan
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={prepareDistributionData("kepuasanFitur")} margin={{ top: 10, right: 10, left: -10, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <BarChart data={prepareDistributionData("kepuasanFitur", COLORS.amber)} margin={{ top: 20, right: 20, left: 0, bottom: 30 }}>
                   <XAxis 
                     dataKey="score" 
-                    tick={{ fontSize: 11 }} 
-                    className="text-muted-foreground"
-                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 0, fontSize: 11 }}
+                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "Skala Likert (1-7)", position: "bottom", offset: 10, fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                   />
-                  <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill={CHART_COLORS.warning} radius={[4, 4, 0, 0]} />
+                  <YAxis 
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted)/0.3)', radius: 8 }} />
+                  <Bar dataKey="count" shape={<RoundedBar />} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -401,40 +485,54 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
         </Card>
 
         {/* Chart 4: Tingkat Kendala (Donut) */}
-        <Card className="border-border/50">
+        <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Tingkat Kendala Penggunaan Fitur</CardTitle>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-emerald-500 to-rose-500" />
+              Tingkat Kendala Penggunaan Fitur
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
+                  <defs>
+                    <linearGradient id="greenGradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#22C55E" />
+                      <stop offset="100%" stopColor="#16A34A" />
+                    </linearGradient>
+                    <linearGradient id="redGradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#EF4444" />
+                      <stop offset="100%" stopColor="#DC2626" />
+                    </linearGradient>
+                  </defs>
                   <Pie
                     data={donutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={3}
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={4}
                     dataKey="value"
-                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                     labelLine={false}
+                    stroke="none"
                   >
-                    {donutData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={DONUT_COLORS[index]} />
-                    ))}
+                    <Cell fill="url(#greenGradient)" />
+                    <Cell fill="url(#redGradient)" />
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
+                      backgroundColor: "hsl(var(--foreground))",
+                      color: "hsl(var(--background))",
+                      borderRadius: "12px",
+                      border: "none",
                     }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={36}
-                    formatter={(value) => <span className="text-sm text-foreground">{value}</span>}
+                    height={40}
+                    formatter={(value) => <span className="text-sm font-medium text-foreground">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -447,49 +545,61 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
       </div>
 
       {/* Chart 5: Ragam Kendala (Full Width) */}
-      <Card className="border-border/50">
+      <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Ragam Kendala Penggunaan</CardTitle>
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <div className="w-1 h-5 rounded-full" style={{ backgroundColor: COLORS.red }} />
+            Ragam Kendala Penggunaan
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[320px] w-full">
+          <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={kendalaAnalysis.kendalaData} 
                 layout="vertical" 
-                margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+                margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
               >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 11 }} className="text-muted-foreground" />
+                <XAxis 
+                  type="number" 
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <YAxis
                   dataKey="name"
                   type="category"
-                  tick={{ fontSize: 10 }}
-                  className="text-muted-foreground"
-                  width={220}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  width={160}
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
+                    backgroundColor: "hsl(var(--foreground))",
+                    color: "hsl(var(--background))",
+                    borderRadius: "12px",
+                    border: "none",
                   }}
                   formatter={(value: number) => [`${value} respon`, "Jumlah"]}
                 />
-                <Bar dataKey="count" fill={CHART_COLORS.destructive} radius={[0, 4, 4, 0]} />
+                <Bar dataKey="count" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <InsightBox>
-            <strong>Wawasan:</strong> Kendala terbanyak adalah "{kendalaAnalysis.kendalaData[0]?.name}" dengan {kendalaAnalysis.kendalaData[0]?.count} laporan.
+            <strong>Wawasan:</strong> Kendala terbanyak adalah "<strong>{kendalaAnalysis.kendalaData[0]?.name}</strong>" dengan {kendalaAnalysis.kendalaData[0]?.count} laporan.
           </InsightBox>
         </CardContent>
       </Card>
 
-      {/* Bonus: Stacked Bar Chart for Quick Comparison */}
-      <Card className="border-border/50">
+      {/* Stacked Bar Chart */}
+      <Card className="border-0 bg-card rounded-2xl shadow-sm overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Perbandingan Komposisi Respon (Negatif – Netral – Positif)</CardTitle>
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <div className="w-1 h-5 rounded-full bg-gradient-to-b from-rose-500 via-amber-500 to-emerald-500" />
+            Perbandingan Komposisi Respon
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[200px] w-full">
@@ -518,24 +628,40 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
                 layout="vertical"
                 margin={{ top: 10, right: 30, left: 80, bottom: 10 }}
               >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 11 }} className="text-muted-foreground" />
-                <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} className="text-muted-foreground" width={70} />
+                <XAxis 
+                  type="number" 
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  dataKey="name" 
+                  type="category" 
+                  tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                  width={70} 
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
+                    backgroundColor: "hsl(var(--foreground))",
+                    color: "hsl(var(--background))",
+                    borderRadius: "12px",
+                    border: "none",
                   }}
                 />
                 <Legend 
                   verticalAlign="top" 
-                  height={36}
-                  formatter={(value) => <span className="text-sm text-foreground capitalize">{value} (skor {value === "negatif" ? "1-3" : value === "netral" ? "4-5" : "6-7"})</span>}
+                  height={40}
+                  formatter={(value) => (
+                    <span className="text-sm font-medium text-foreground capitalize">
+                      {value} ({value === "negatif" ? "1-3" : value === "netral" ? "4-5" : "6-7"})
+                    </span>
+                  )}
                 />
-                <Bar dataKey="negatif" stackId="a" fill={CHART_COLORS.destructive} name="Negatif" />
-                <Bar dataKey="netral" stackId="a" fill={CHART_COLORS.warning} name="Netral" />
-                <Bar dataKey="positif" stackId="a" fill={CHART_COLORS.success} name="Positif" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="negatif" stackId="a" fill="#EF4444" name="Negatif" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="netral" stackId="a" fill="#F59E0B" name="Netral" />
+                <Bar dataKey="positif" stackId="a" fill="#22C55E" name="Positif" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
