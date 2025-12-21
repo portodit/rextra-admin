@@ -8,6 +8,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   BarChart,
   Bar,
   XAxis,
@@ -20,8 +25,6 @@ import {
   Legend,
   AreaChart,
   Area,
-  LineChart,
-  Line,
 } from "recharts";
 import {
   MessageSquareText,
@@ -31,8 +34,7 @@ import {
   TrendingUp,
   TrendingDown,
   Lightbulb,
-  Users,
-  FileCheck,
+  ChevronDown,
 } from "lucide-react";
 
 // Mock data for Mahasiswa feedback (Likert 1-7)
@@ -448,10 +450,10 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     }
   };
 
-  // Donut chart data for feedback response rate
+  // Donut chart data for feedback response rate - bright blue vs dim blue
   const responseRateDonutData = [
-    { name: "Mengisi feedback", value: feedbackResponseRate.totalFeedback },
-    { name: "Tidak mengisi", value: feedbackResponseRate.tidakMengisi },
+    { name: "Mengisi feedback", value: feedbackResponseRate.totalFeedback, color: "#3B82F6" },
+    { name: "Tidak mengisi", value: feedbackResponseRate.tidakMengisi, color: "#93C5FD" },
   ];
 
   // Donut chart data for kendala
@@ -555,28 +557,39 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     </div>
   );
 
-  // Structured Insight Component
-  const StructuredInsight = ({ insight }: { insight: { ringkasan: string; detail: string; implikasi: string; aksi: string; catatan?: string } }) => (
-    <InsightBox>
-      <p>
-        <strong>Ringkasan:</strong> {insight.ringkasan}
-      </p>
-      <p>
-        <strong>Detail:</strong> {insight.detail}
-      </p>
-      <p>
-        <strong>Implikasi:</strong> {insight.implikasi}
-      </p>
-      <p>
-        <strong>Aksi:</strong> {insight.aksi}
-      </p>
-      {insight.catatan && (
-        <p className="mt-2 text-amber-700 dark:text-amber-300 italic">
-          <strong>Catatan:</strong> {insight.catatan}
-        </p>
-      )}
-    </InsightBox>
-  );
+  // Structured Insight Component with collapsible
+  const StructuredInsight = ({ insight }: { insight: { ringkasan: string; detail: string; implikasi: string; aksi: string; catatan?: string } }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    
+    return (
+      <div className="mt-5 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/30 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50 shrink-0">
+            <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          </div>
+          <div className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed flex-1">
+            <p className="font-medium">{insight.ringkasan}</p>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 mt-2 font-medium transition-colors">
+                <span>{isOpen ? "Sembunyikan detail" : "Lihat detail lengkap"}</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                <p><strong>Detail:</strong> {insight.detail}</p>
+                <p><strong>Implikasi:</strong> {insight.implikasi}</p>
+                <p><strong>Aksi Prioritas:</strong> {insight.aksi}</p>
+                {insight.catatan && (
+                  <p className="mt-2 text-amber-700 dark:text-amber-300 italic text-xs">
+                    <strong>Catatan:</strong> {insight.catatan}
+                  </p>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Modern Tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -701,24 +714,24 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
           <CardContent>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={participantData.data} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+                <AreaChart data={participantData.data} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
                   <defs>
-                    <linearGradient id="pesertaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={COLORS.cyan} stopOpacity={0.3} />
-                      <stop offset="100%" stopColor={COLORS.cyan} stopOpacity={0} />
+                    <linearGradient id="pesertaAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={COLORS.cyan} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={COLORS.cyan} stopOpacity={0.05} />
                     </linearGradient>
-                    <linearGradient id="feedbackGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={COLORS.purple} stopOpacity={0.3} />
-                      <stop offset="100%" stopColor={COLORS.purple} stopOpacity={0} />
+                    <linearGradient id="feedbackAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={COLORS.purple} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={COLORS.purple} stopOpacity={0.05} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey={participantData.xKey} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                   <Tooltip content={<LineChartTooltip />} />
                   <Legend verticalAlign="top" height={40} formatter={(value) => <span className="text-sm font-medium text-foreground">{value}</span>} />
-                  <Line type="monotone" dataKey="pesertaTes" name="Peserta Tes" stroke={COLORS.cyan} strokeWidth={3} dot={{ fill: COLORS.cyan, strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
-                  <Line type="monotone" dataKey="pengisiFeedback" name="Pengisi Feedback" stroke={COLORS.purple} strokeWidth={3} dot={{ fill: COLORS.purple, strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
-                </LineChart>
+                  <Area type="monotone" dataKey="pesertaTes" name="Peserta Tes" stroke={COLORS.cyan} strokeWidth={3} fill="url(#pesertaAreaGradient)" dot={{ fill: COLORS.cyan, strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                  <Area type="monotone" dataKey="pengisiFeedback" name="Pengisi Feedback" stroke={COLORS.purple} strokeWidth={3} fill="url(#feedbackAreaGradient)" dot={{ fill: COLORS.purple, strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
             <InsightBox>
@@ -746,12 +759,12 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
                 <PieChart>
                   <defs>
                     <linearGradient id="mengisiGradient" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor={COLORS.purple} />
-                      <stop offset="100%" stopColor={COLORS.pink} />
+                      <stop offset="0%" stopColor="#3B82F6" />
+                      <stop offset="100%" stopColor="#2563EB" />
                     </linearGradient>
                     <linearGradient id="tidakMengisiGradient" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#94A3B8" />
-                      <stop offset="100%" stopColor="#64748B" />
+                      <stop offset="0%" stopColor="#93C5FD" />
+                      <stop offset="100%" stopColor="#BFDBFE" />
                     </linearGradient>
                   </defs>
                   <Pie data={responseRateDonutData} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={4} dataKey="value" label={({ percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false} stroke="none">
