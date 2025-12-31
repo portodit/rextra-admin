@@ -29,6 +29,7 @@ import {
   Search,
   Download,
   Eye,
+  Trash2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -36,6 +37,8 @@ import { ExportDataDialog } from "@/components/ExportDataDialog";
 import { MahasiswaVisualization } from "@/components/MahasiswaVisualization";
 import { ExpertVisualization } from "@/components/ExpertVisualization";
 import { ExpertDetailDrawer } from "@/components/ExpertDetailDrawer";
+import { ExpertDeleteDialog } from "@/components/ExpertDeleteDialog";
+import { toast } from "sonner";
 
 // Mock data for Mahasiswa feedback (Likert 1-7)
 const mahasiswaFeedbackData = [
@@ -338,6 +341,8 @@ export default function UmpanBalik() {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [selectedExpertFeedback, setSelectedExpertFeedback] = useState<ExpertFeedback | null>(null);
   const [isExpertDetailOpen, setIsExpertDetailOpen] = useState(false);
+  const [isExpertDeleteOpen, setIsExpertDeleteOpen] = useState(false);
+  const [feedbackToDelete, setFeedbackToDelete] = useState<ExpertFeedback | null>(null);
 
   // Total data count (simulated large dataset)
   const totalDataCount = 10000;
@@ -457,6 +462,21 @@ export default function UmpanBalik() {
   const handleExpertTopNChange = (value: TopNFilter) => {
     setExpertTopNFilter(value);
     setExpertCurrentPage(1);
+  };
+
+  // Delete handler for Expert feedback
+  const handleDeleteExpert = (feedback: ExpertFeedback) => {
+    setFeedbackToDelete(feedback);
+    setIsExpertDeleteOpen(true);
+  };
+
+  const confirmDeleteExpert = () => {
+    if (feedbackToDelete) {
+      toast.success(`Feedback ${feedbackToDelete.id} berhasil dihapus`, {
+        description: `Feedback dari ${feedbackToDelete.nama} telah dihapus.`,
+      });
+      setFeedbackToDelete(null);
+    }
   };
 
   // TopN badge component
@@ -947,20 +967,17 @@ export default function UmpanBalik() {
                 <Card>
                   <CardContent className="pt-6">
                     <div className="overflow-x-auto -mx-4 md:mx-0">
-                      <div className="min-w-[900px] px-4 md:px-0">
+                      <div className="min-w-[700px] px-4 md:px-0">
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-muted/50">
                               <TableHead className="w-[100px]">ID Feedback</TableHead>
-                              <TableHead className="min-w-[120px]">Nama Expert</TableHead>
-                              <TableHead className="min-w-[120px]">Profesi</TableHead>
-                              <TableHead className="text-center">Top 5</TableHead>
+                              <TableHead className="min-w-[140px]">Nama Expert</TableHead>
                               <TableHead className="text-center">Akurasi</TableHead>
                               <TableHead className="text-center">Logika</TableHead>
                               <TableHead className="text-center">Manfaat</TableHead>
-                              <TableHead className="min-w-[150px]">Kendala</TableHead>
                               <TableHead>Tanggal</TableHead>
-                              <TableHead className="text-center w-[80px]">Aksi</TableHead>
+                              <TableHead className="text-center w-[120px]">Aksi</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -975,12 +992,6 @@ export default function UmpanBalik() {
                                 <TableCell className="font-medium">
                                   {feedback.nama}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground">
-                                  {feedback.profesi}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <TopNBadge status={feedback.topNStatus} />
-                                </TableCell>
                                 <TableCell className="text-center">
                                   <ScoreBadge score={feedback.akurasi} />
                                 </TableCell>
@@ -990,25 +1001,49 @@ export default function UmpanBalik() {
                                 <TableCell className="text-center">
                                   <ScoreBadge score={feedback.manfaat} />
                                 </TableCell>
-                                <TableCell>
-                                  <KendalaChips kendala={feedback.kendala} />
-                                </TableCell>
                                 <TableCell className="text-muted-foreground text-sm">
                                   {feedback.tanggal}
                                 </TableCell>
-                                <TableCell className="text-center">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedExpertFeedback(feedback);
-                                      setIsExpertDetailOpen(true);
-                                    }}
-                                    className="hover:bg-primary/10 hover:text-primary"
-                                  >
-                                    <Eye className="h-4 w-4 mr-1" />
-                                    Detail
-                                  </Button>
+                                <TableCell>
+                                  <div className="flex items-center justify-center gap-1">
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                              setSelectedExpertFeedback(feedback);
+                                              setIsExpertDetailOpen(true);
+                                            }}
+                                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                                          >
+                                            <Eye className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Lihat Detail</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleDeleteExpert(feedback)}
+                                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                                          >
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Hapus Feedback</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -1087,6 +1122,15 @@ export default function UmpanBalik() {
         open={isExpertDetailOpen}
         onOpenChange={setIsExpertDetailOpen}
         feedback={selectedExpertFeedback}
+      />
+
+      {/* Expert Delete Dialog */}
+      <ExpertDeleteDialog
+        open={isExpertDeleteOpen}
+        onOpenChange={setIsExpertDeleteOpen}
+        feedbackId={feedbackToDelete?.id || null}
+        expertName={feedbackToDelete?.nama || null}
+        onConfirm={confirmDeleteExpert}
       />
     </DashboardLayout>
   );

@@ -7,7 +7,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { User, Award, MessageSquare, AlertTriangle, Star, Target, Brain, TrendingUp } from "lucide-react";
+import { User, Award, MessageSquare, AlertTriangle, Star, Target, Brain, TrendingUp, Calendar, Briefcase, GraduationCap, Building } from "lucide-react";
 
 interface ExpertFeedback {
   id: string;
@@ -39,19 +39,19 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
   if (!feedback) return null;
 
   const getScoreColor = (score: number) => {
-    if (score >= 6) return "bg-success/10 text-success border-success/20";
-    if (score >= 4) return "bg-warning/10 text-warning border-warning/20";
-    return "bg-destructive/10 text-destructive border-destructive/20";
+    if (score >= 6) return "bg-success/15 text-success border-success/30";
+    if (score >= 4) return "bg-warning/15 text-warning border-warning/30";
+    return "bg-destructive/15 text-destructive border-destructive/30";
   };
 
   const getTopNColor = (status: string) => {
     switch (status) {
       case "P1":
-        return "bg-success/10 text-success border-success/20";
+        return "bg-success/15 text-success border-success/30";
       case "P2":
-        return "bg-blue-500/10 text-blue-600 border-blue-500/20";
+        return "bg-blue-500/15 text-blue-600 border-blue-500/30";
       case "P3-5":
-        return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+        return "bg-amber-500/15 text-amber-600 border-amber-500/30";
       default:
         return "bg-muted text-muted-foreground border-border";
     }
@@ -86,101 +86,114 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col h-full">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border">
-          <SheetHeader className="p-6 pb-4">
-            <SheetTitle className="text-lg font-semibold text-foreground">
+        <div className="sticky top-0 z-10 bg-background">
+          <SheetHeader className="px-6 pt-6 pb-4">
+            <SheetTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <div className="h-8 w-1 bg-primary rounded-full" />
               Detail Feedback Expert
             </SheetTitle>
           </SheetHeader>
           <Separator />
         </div>
 
-        <ScrollArea className="flex-1 px-6 py-4">
-          <div className="space-y-6 pb-6">
+        <ScrollArea className="flex-1">
+          <div className="px-6 py-5 space-y-5">
             {/* Section 1: Identitas Responden */}
-            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <section className="rounded-xl border border-[#cacaca]/60 bg-card/50 p-5 space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
                 <User className="h-4 w-4 text-primary" />
                 Identitas Responden
               </h3>
               
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
                 {/* ID Feedback */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">ID Feedback</p>
-                  <p className="font-mono font-medium text-foreground">{feedback.id}</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">ID Feedback</p>
+                  <p className="font-mono font-semibold text-foreground bg-muted/50 px-2 py-1 rounded inline-block">{feedback.id}</p>
                 </div>
                 
                 {/* Tanggal */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Tanggal</p>
-                  <p className="text-foreground">{feedback.tanggal}</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Tanggal
+                  </p>
+                  <p className="text-foreground font-medium">{feedback.tanggal}</p>
                 </div>
                 
                 {/* Nama Expert */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Nama Expert</p>
-                  <p className="font-medium text-foreground">{feedback.nama}</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nama Expert</p>
+                  <p className="font-semibold text-foreground">{feedback.nama}</p>
                 </div>
                 
                 {/* Profesi */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Profesi</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                    <Briefcase className="h-3 w-3" />
+                    Profesi
+                  </p>
                   <p className="text-foreground">{feedback.profesi}</p>
                 </div>
                 
                 {/* Gelar */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Gelar</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Gelar</p>
                   <p className="text-foreground">{feedback.gelar || "-"}</p>
                 </div>
                 
                 {/* Pengalaman */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Pengalaman</p>
-                  <Badge variant="secondary" className="font-normal">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pengalaman</p>
+                  <Badge variant="secondary" className="font-medium text-xs">
                     {formatPengalaman(feedback.pengalamanTahun)}
                   </Badge>
                 </div>
                 
                 {/* Pendidikan Terakhir */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Pendidikan Terakhir</p>
-                  <Badge variant="secondary" className="font-normal">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                    <GraduationCap className="h-3 w-3" />
+                    Pendidikan Terakhir
+                  </p>
+                  <Badge variant="secondary" className="font-medium text-xs">
                     {formatPendidikan(feedback.pendidikanTerakhir)}
                   </Badge>
                 </div>
                 
                 {/* Perguruan Tinggi */}
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Perguruan Tinggi</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                    <Building className="h-3 w-3" />
+                    Perguruan Tinggi
+                  </p>
                   <p className="text-foreground">{feedback.perguruanTinggi || "-"}</p>
                 </div>
                 
                 {/* Program Studi - Full Width */}
                 <div className="space-y-1 col-span-2">
-                  <p className="text-xs text-muted-foreground">Program Studi</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Program Studi</p>
                   <p className="text-foreground">{feedback.programStudi || "-"}</p>
                 </div>
                 
                 {/* Kategori Tes - Full Width with Badge */}
                 <div className="space-y-1 col-span-2">
-                  <p className="text-xs text-muted-foreground">Kategori Tes</p>
-                  <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Kategori Tes</p>
+                  <Badge className="bg-primary/10 border-primary/30 text-primary hover:bg-primary/15 font-medium">
                     {feedback.kategoriTes}
                   </Badge>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Section 2: 5 Rekomendasi Profesi Teratas */}
-            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
+            <section className="rounded-xl border border-[#cacaca]/60 bg-card/50 p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
                   <Award className="h-4 w-4 text-primary" />
                   5 Rekomendasi Profesi Teratas
                 </h3>
-                <Badge className={`${getTopNColor(feedback.topNStatus)} font-medium`}>
+                <Badge className={`${getTopNColor(feedback.topNStatus)} font-semibold px-3`}>
                   {feedback.topNStatus}
                 </Badge>
               </div>
@@ -189,63 +202,69 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
                 {feedback.top5Recommendations.map((rec, index) => (
                   <div 
                     key={index} 
-                    className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 border border-border/50 hover:bg-muted/60 transition-colors"
                   >
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
+                    <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0 ${
+                      index === 0 
+                        ? "bg-primary text-primary-foreground" 
+                        : index === 1 
+                          ? "bg-primary/60 text-primary-foreground"
+                          : "bg-primary/20 text-primary"
+                    }`}>
                       {index + 1}
                     </span>
-                    <span className="text-sm text-foreground">{rec}</span>
+                    <span className="text-sm font-medium text-foreground">{rec}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
             {/* Section 3: Penilaian Likert (1-7) */}
-            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <section className="rounded-xl border border-[#cacaca]/60 bg-card/50 p-5 space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
                 <Star className="h-4 w-4 text-primary" />
                 Penilaian Likert (1–7)
               </h3>
               
               <div className="grid grid-cols-3 gap-3">
                 {/* Akurasi Profil */}
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                <div className="p-4 rounded-lg bg-muted/40 border border-border/50 text-center space-y-2.5 hover:bg-muted/60 transition-colors">
                   <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
-                    <Target className="h-3.5 w-3.5" />
-                    <p className="text-xs">Akurasi Profil</p>
+                    <Target className="h-4 w-4" />
                   </div>
-                  <Badge className={`${getScoreColor(feedback.akurasi)} text-sm font-semibold px-3 py-1`}>
+                  <p className="text-xs font-medium text-muted-foreground">Akurasi Profil</p>
+                  <Badge className={`${getScoreColor(feedback.akurasi)} text-base font-bold px-4 py-1.5`}>
                     {feedback.akurasi}/7
                   </Badge>
                 </div>
                 
                 {/* Logika Penjelasan */}
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                <div className="p-4 rounded-lg bg-muted/40 border border-border/50 text-center space-y-2.5 hover:bg-muted/60 transition-colors">
                   <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
-                    <Brain className="h-3.5 w-3.5" />
-                    <p className="text-xs">Logika Penjelasan</p>
+                    <Brain className="h-4 w-4" />
                   </div>
-                  <Badge className={`${getScoreColor(feedback.logika)} text-sm font-semibold px-3 py-1`}>
+                  <p className="text-xs font-medium text-muted-foreground">Logika Penjelasan</p>
+                  <Badge className={`${getScoreColor(feedback.logika)} text-base font-bold px-4 py-1.5`}>
                     {feedback.logika}/7
                   </Badge>
                 </div>
                 
                 {/* Potensi Manfaat */}
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                <div className="p-4 rounded-lg bg-muted/40 border border-border/50 text-center space-y-2.5 hover:bg-muted/60 transition-colors">
                   <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
-                    <TrendingUp className="h-3.5 w-3.5" />
-                    <p className="text-xs">Potensi Manfaat</p>
+                    <TrendingUp className="h-4 w-4" />
                   </div>
-                  <Badge className={`${getScoreColor(feedback.manfaat)} text-sm font-semibold px-3 py-1`}>
+                  <p className="text-xs font-medium text-muted-foreground">Potensi Manfaat</p>
+                  <Badge className={`${getScoreColor(feedback.manfaat)} text-base font-bold px-4 py-1.5`}>
                     {feedback.manfaat}/7
                   </Badge>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Section 4: Kendala yang Dilaporkan */}
-            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <section className="rounded-xl border border-[#cacaca]/60 bg-card/50 p-5 space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
                 <AlertTriangle className="h-4 w-4 text-primary" />
                 Kendala yang Dilaporkan
               </h3>
@@ -256,38 +275,43 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
                     <Badge 
                       key={i} 
                       variant="secondary" 
-                      className="text-xs bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/15"
+                      className="text-xs bg-destructive/10 text-destructive border-destructive/30 hover:bg-destructive/15 py-1.5 px-3"
                     >
                       {k}
                     </Badge>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  Tidak ada kendala dilaporkan
-                </p>
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-success/5 border border-success/20">
+                  <div className="h-2 w-2 rounded-full bg-success" />
+                  <p className="text-sm text-success font-medium">
+                    Tidak ada kendala dilaporkan
+                  </p>
+                </div>
               )}
-            </div>
+            </section>
 
             {/* Section 5: Masukan / Saran Perbaikan */}
-            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <section className="rounded-xl border border-[#cacaca]/60 bg-card/50 p-5 space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
                 <MessageSquare className="h-4 w-4 text-primary" />
                 Masukan / Saran Perbaikan
               </h3>
               
               {feedback.masukan ? (
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50">
+                <div className="p-4 rounded-lg bg-muted/40 border border-border/50">
                   <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                     {feedback.masukan}
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  Tidak ada masukan tertulis.
-                </p>
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30 border border-border/50">
+                  <p className="text-sm text-muted-foreground italic">
+                    Tidak ada masukan tertulis.
+                  </p>
+                </div>
               )}
-            </div>
+            </section>
           </div>
         </ScrollArea>
       </SheetContent>
