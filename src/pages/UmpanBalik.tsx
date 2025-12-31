@@ -38,10 +38,28 @@ import { MahasiswaVisualization } from "@/components/MahasiswaVisualization";
 import { ExpertVisualization } from "@/components/ExpertVisualization";
 import { ExpertDetailDrawer } from "@/components/ExpertDetailDrawer";
 import { ExpertDeleteDialog } from "@/components/ExpertDeleteDialog";
+import { MahasiswaDetailDrawer } from "@/components/MahasiswaDetailDrawer";
+import { MahasiswaDeleteDialog } from "@/components/MahasiswaDeleteDialog";
 import { toast } from "sonner";
 
+// Mahasiswa feedback type
+interface MahasiswaFeedback {
+  id: string;
+  userName: string;
+  kemudahanTes: number;
+  relevansiRekomendasi: number;
+  kepuasanFitur: number;
+  kendala: string[];
+  masukan?: string;
+  tanggal?: string;
+  email?: string;
+  programStudi?: string;
+  angkatan?: string;
+  kategoriTes?: string;
+}
+
 // Mock data for Mahasiswa feedback (Likert 1-7)
-const mahasiswaFeedbackData = [
+const mahasiswaFeedbackData: MahasiswaFeedback[] = [
   {
     id: "MHS001",
     userName: "Siti Nurhaliza",
@@ -49,6 +67,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 5,
     kepuasanFitur: 6,
     kendala: ["Waktu loading lama", "Tampilan kurang responsif"],
+    masukan: "Secara keseluruhan tes ini cukup membantu, tapi ada beberapa bagian yang perlu diperbaiki terutama kecepatan loading.",
+    tanggal: "10 Des 2025",
+    programStudi: "Teknik Informatika",
+    angkatan: "2021",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS002",
@@ -57,6 +80,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 7,
     kepuasanFitur: 6,
     kendala: [],
+    masukan: "Sangat membantu dalam mengenali potensi karier saya. Terima kasih!",
+    tanggal: "09 Des 2025",
+    programStudi: "Manajemen",
+    angkatan: "2022",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS003",
@@ -65,6 +93,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 3,
     kepuasanFitur: 4,
     kendala: ["Pertanyaan membingungkan", "Hasil kurang akurat", "Tidak ada penjelasan detail"],
+    masukan: "Beberapa pertanyaan kurang jelas maksudnya. Hasil yang keluar juga tidak terlalu sesuai dengan ekspektasi saya.",
+    tanggal: "08 Des 2025",
+    programStudi: "Psikologi",
+    angkatan: "2020",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS004",
@@ -73,6 +106,10 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 6,
     kepuasanFitur: 5,
     kendala: ["Navigasi kurang jelas"],
+    tanggal: "07 Des 2025",
+    programStudi: "Teknik Elektro",
+    angkatan: "2021",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS005",
@@ -81,6 +118,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 6,
     kepuasanFitur: 7,
     kendala: [],
+    masukan: "Fitur ini sangat bermanfaat untuk mahasiswa yang bingung menentukan arah karier.",
+    tanggal: "06 Des 2025",
+    programStudi: "Akuntansi",
+    angkatan: "2022",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS006",
@@ -89,6 +131,10 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 5,
     kepuasanFitur: 6,
     kendala: ["Loading terlalu lama"],
+    tanggal: "05 Des 2025",
+    programStudi: "Sistem Informasi",
+    angkatan: "2021",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS007",
@@ -97,6 +143,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 4,
     kepuasanFitur: 3,
     kendala: ["Error saat submit", "Halaman tidak responsive", "Data hilang"],
+    masukan: "Pengalaman kurang baik karena banyak error. Mohon diperbaiki.",
+    tanggal: "04 Des 2025",
+    programStudi: "Desain Komunikasi Visual",
+    angkatan: "2020",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS008",
@@ -105,6 +156,10 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 7,
     kepuasanFitur: 6,
     kendala: [],
+    tanggal: "03 Des 2025",
+    programStudi: "Teknik Mesin",
+    angkatan: "2021",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS009",
@@ -113,6 +168,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 5,
     kepuasanFitur: 5,
     kendala: ["Font terlalu kecil"],
+    masukan: "Ukuran font sebaiknya diperbesar agar lebih mudah dibaca.",
+    tanggal: "02 Des 2025",
+    programStudi: "Ilmu Komunikasi",
+    angkatan: "2022",
+    kategoriTes: "Tes Profil Karier",
   },
   {
     id: "MHS010",
@@ -121,6 +181,11 @@ const mahasiswaFeedbackData = [
     relevansiRekomendasi: 6,
     kepuasanFitur: 7,
     kendala: [],
+    masukan: "Sangat bagus! Rekomendasi profesinya akurat.",
+    tanggal: "01 Des 2025",
+    programStudi: "Teknik Informatika",
+    angkatan: "2021",
+    kategoriTes: "Tes Profil Karier",
   },
 ];
 
@@ -343,6 +408,12 @@ export default function UmpanBalik() {
   const [isExpertDetailOpen, setIsExpertDetailOpen] = useState(false);
   const [isExpertDeleteOpen, setIsExpertDeleteOpen] = useState(false);
   const [feedbackToDelete, setFeedbackToDelete] = useState<ExpertFeedback | null>(null);
+  
+  // Mahasiswa modal states
+  const [selectedMahasiswaFeedback, setSelectedMahasiswaFeedback] = useState<MahasiswaFeedback | null>(null);
+  const [isMahasiswaDetailOpen, setIsMahasiswaDetailOpen] = useState(false);
+  const [isMahasiswaDeleteOpen, setIsMahasiswaDeleteOpen] = useState(false);
+  const [mahasiswaToDelete, setMahasiswaToDelete] = useState<MahasiswaFeedback | null>(null);
 
   // Total data count (simulated large dataset)
   const totalDataCount = 10000;
@@ -476,6 +547,21 @@ export default function UmpanBalik() {
         description: `Feedback dari ${feedbackToDelete.nama} telah dihapus.`,
       });
       setFeedbackToDelete(null);
+    }
+  };
+
+  // Delete handler for Mahasiswa feedback
+  const handleDeleteMahasiswa = (feedback: MahasiswaFeedback) => {
+    setMahasiswaToDelete(feedback);
+    setIsMahasiswaDeleteOpen(true);
+  };
+
+  const confirmDeleteMahasiswa = () => {
+    if (mahasiswaToDelete) {
+      toast.success(`Feedback ${mahasiswaToDelete.id} berhasil dihapus`, {
+        description: `Feedback dari ${mahasiswaToDelete.userName} telah dihapus.`,
+      });
+      setMahasiswaToDelete(null);
     }
   };
 
@@ -749,12 +835,12 @@ export default function UmpanBalik() {
                             <TableHeader>
                               <TableRow className="bg-muted/50">
                                 <TableHead className="w-[100px]">ID Feedback</TableHead>
-                                <TableHead className="min-w-[150px]">Pengguna</TableHead>
+                                <TableHead className="min-w-[150px]">Nama Pengguna</TableHead>
                                 <TableHead className="text-center">Kemudahan Tes</TableHead>
                                 <TableHead className="text-center">Relevansi Rekomendasi</TableHead>
                                 <TableHead className="text-center">Kepuasan Fitur</TableHead>
-                                <TableHead className="min-w-[200px]">Daftar Kendala</TableHead>
-                                <TableHead className="text-center w-[80px]">Aksi</TableHead>
+                                <TableHead>Tanggal</TableHead>
+                                <TableHead className="text-center w-[120px]">Aksi</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -778,17 +864,49 @@ export default function UmpanBalik() {
                                   <TableCell className="text-center">
                                     <ScoreBadge score={feedback.kepuasanFitur} />
                                   </TableCell>
-                                  <TableCell>
-                                    <KendalaChips kendala={feedback.kendala} />
+                                  <TableCell className="text-muted-foreground text-sm">
+                                    {feedback.tanggal || "-"}
                                   </TableCell>
-                                  <TableCell className="text-center">
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="hover:bg-primary/10 hover:text-primary"
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
+                                  <TableCell>
+                                    <div className="flex items-center justify-center gap-1">
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                setSelectedMahasiswaFeedback(feedback);
+                                                setIsMahasiswaDetailOpen(true);
+                                              }}
+                                              className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                                            >
+                                              <Eye className="h-4 w-4" />
+                                            </Button>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                            <p>Lihat Detail</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => handleDeleteMahasiswa(feedback)}
+                                              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                                            >
+                                              <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                            <p>Hapus Feedback</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    </div>
                                   </TableCell>
                                 </TableRow>
                               ))}
@@ -1131,6 +1249,22 @@ export default function UmpanBalik() {
         feedbackId={feedbackToDelete?.id || null}
         expertName={feedbackToDelete?.nama || null}
         onConfirm={confirmDeleteExpert}
+      />
+
+      {/* Mahasiswa Detail Drawer */}
+      <MahasiswaDetailDrawer
+        open={isMahasiswaDetailOpen}
+        onOpenChange={setIsMahasiswaDetailOpen}
+        feedback={selectedMahasiswaFeedback}
+      />
+
+      {/* Mahasiswa Delete Dialog */}
+      <MahasiswaDeleteDialog
+        open={isMahasiswaDeleteOpen}
+        onOpenChange={setIsMahasiswaDeleteOpen}
+        feedbackId={mahasiswaToDelete?.id || null}
+        userName={mahasiswaToDelete?.userName || null}
+        onConfirm={confirmDeleteMahasiswa}
       />
     </DashboardLayout>
   );
