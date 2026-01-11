@@ -36,16 +36,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { Search, Eye, Trash2, Download, AlertTriangle, Code, Palette, PenTool, Megaphone, Settings, BarChart3, FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProfesiDetailDrawer } from "@/components/ProfesiDetailDrawer";
 
 // Types
 interface Profesi {
@@ -742,62 +737,11 @@ const KamusKarierMasterData = () => {
       </AlertDialog>
 
       {/* Detail Drawer */}
-      <Sheet open={detailDrawerOpen} onOpenChange={setDetailDrawerOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader className="border-b border-border pb-4">
-            <SheetTitle>Detail Profesi</SheetTitle>
-          </SheetHeader>
-          {selectedProfesi && (
-            <div className="py-6 space-y-6">
-              {/* Identitas Profesi */}
-              <div className="border border-border/60 rounded-lg p-4 space-y-4">
-                <h3 className="text-sm font-semibold text-foreground">Identitas Profesi</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Nama Profesi</p>
-                    <p className="text-sm font-medium">{selectedProfesi.nama}</p>
-                  </div>
-                  {selectedProfesi.alias && (
-                    <div>
-                      <p className="text-xs text-muted-foreground">Alias</p>
-                      <p className="text-sm font-medium">{selectedProfesi.alias}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-xs text-muted-foreground">Kategori</p>
-                    <p className="text-sm font-medium">{selectedProfesi.kategori}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">RIASEC</p>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-accent text-accent-foreground">
-                      {selectedProfesi.riasec}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Terakhir Diperbarui</p>
-                    <p className="text-sm font-medium">{selectedProfesi.diperbarui}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sub-kategori */}
-              <div className="border border-border/60 rounded-lg p-4 space-y-3">
-                <h3 className="text-sm font-semibold text-foreground">Sub-kategori</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProfesi.subKategori.map((sub, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-secondary text-secondary-foreground"
-                    >
-                      {sub}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+      <ProfesiDetailDrawer
+        open={detailDrawerOpen}
+        onOpenChange={setDetailDrawerOpen}
+        profesi={selectedProfesi}
+      />
     </DashboardLayout>
   );
 };
