@@ -639,22 +639,22 @@ export default function SistemTokenIkhtisar() {
               <p className="text-sm text-muted-foreground mb-3">
                 Menampilkan data untuk: <span className="font-medium text-foreground">{getTabLabel(selectedTab)}</span>
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 {kpiCards.map((kpi) => (
                   <Card
                     key={kpi.key}
-                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    className="cursor-pointer hover:shadow-md transition-shadow min-w-0"
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-muted-foreground">
+                    <CardContent className="p-3 sm:p-4 lg:p-6">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
                               {kpi.title}
                             </p>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <button className="cursor-help">
+                                <button className="cursor-help shrink-0">
                                   <HelpCircle className="h-3 w-3 text-muted-foreground/60 hover:text-muted-foreground transition-colors" />
                                 </button>
                               </TooltipTrigger>
@@ -663,28 +663,29 @@ export default function SistemTokenIkhtisar() {
                               </TooltipContent>
                             </Tooltip>
                           </div>
-                          <p className="text-2xl font-bold">
+                          <p className="text-lg sm:text-xl lg:text-2xl font-bold truncate">
                             {kpi.key === "netFlow" && kpi.value < 0 && "-"}
                             {kpi.isCount ? kpi.value : formatNumber(kpi.value)}
-                            {!kpi.isCount && <span className="text-lg font-normal ml-1">token</span>}
-                            {kpi.isCount && <span className="text-lg font-normal ml-1">transaksi</span>}
+                            <span className="text-sm sm:text-base lg:text-lg font-normal ml-1">
+                              {kpi.isCount ? "trx" : "token"}
+                            </span>
                           </p>
                           {kpi.delta > 0 && (
-                            <div className="flex items-center gap-1 text-xs">
+                            <div className="flex items-center gap-1 text-[10px] sm:text-xs">
                               {kpi.deltaPositive ? (
-                                <TrendingUp className="h-3 w-3 text-emerald-600" />
+                                <TrendingUp className="h-3 w-3 text-emerald-600 shrink-0" />
                               ) : (
-                                <TrendingDown className="h-3 w-3 text-red-600" />
+                                <TrendingDown className="h-3 w-3 text-red-600 shrink-0" />
                               )}
                               <span className={kpi.deltaPositive ? "text-emerald-600" : "text-red-600"}>
                                 {kpi.deltaPositive ? "+" : ""}{kpi.delta}%
                               </span>
-                              <span className="text-muted-foreground">vs periode sblm</span>
+                              <span className="text-muted-foreground hidden sm:inline">vs periode sblm</span>
                             </div>
                           )}
                         </div>
-                        <div className={`p-2.5 rounded-lg ${kpi.bgColor}`}>
-                          <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
+                        <div className={`p-1.5 sm:p-2 lg:p-2.5 rounded-lg shrink-0 ${kpi.bgColor}`}>
+                          <kpi.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${kpi.color}`} />
                         </div>
                       </div>
                     </CardContent>
