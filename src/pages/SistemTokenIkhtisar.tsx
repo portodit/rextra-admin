@@ -516,9 +516,9 @@ export default function SistemTokenIkhtisar() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Breadcrumb */}
-        <Breadcrumb>
+      <div className="space-y-4 sm:space-y-6">
+        {/* Breadcrumb - Hidden on mobile */}
+        <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
@@ -535,92 +535,93 @@ export default function SistemTokenIkhtisar() {
         </Breadcrumb>
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Ikhtisar Token</h1>
-            <p className="text-muted-foreground mt-1">
-              Pantau pergerakan token masuk dan keluar, serta ringkasan pemakaian token pada periode tertentu.
-            </p>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" className="cursor-help">
-                <HelpCircle className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="max-w-xs z-50 bg-popover">
-              <p className="text-sm">
-                Token adalah unit mata uang dalam sistem REXTRA yang digunakan untuk mengakses fitur berbayar. 
-                Halaman ini menampilkan ringkasan pergerakan token termasuk top up, alokasi dari membership, dan pemakaian.
+        <div className="flex flex-col gap-3 sm:gap-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Ikhtisar Token</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1 line-clamp-2 sm:line-clamp-none">
+                Pantau pergerakan token masuk dan keluar, serta ringkasan pemakaian token pada periode tertentu.
               </p>
-            </TooltipContent>
-          </Tooltip>
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="cursor-help shrink-0 h-8 w-8 sm:h-9 sm:w-9">
+                  <HelpCircle className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-xs z-50 bg-popover">
+                <p className="text-sm">
+                  Token adalah unit mata uang dalam sistem REXTRA yang digunakan untuk mengakses fitur berbayar. 
+                  Halaman ini menampilkan ringkasan pergerakan token termasuk top up, alokasi dari membership, dan pemakaian.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
 
-        {/* Control Bar - All in one row */}
-        <div className="space-y-4">
-          {/* Main Control Row: Tabs | Search | Period | Status */}
-          <div className="flex flex-col xl:flex-row gap-4 items-start xl:items-center">
-            {/* Tabs - Left */}
+        {/* Control Bar - Mobile optimized */}
+        <div className="space-y-3 sm:space-y-4">
+          {/* Tabs - Scrollable on mobile */}
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as TabType)} className="w-full xl:w-auto shrink-0">
-              <TabsList className="w-full xl:w-auto grid grid-cols-4 xl:flex">
-                <TabsTrigger value="semua">Semua</TabsTrigger>
-                <TabsTrigger value="topup">Top Up</TabsTrigger>
-                <TabsTrigger value="alokasi">Alokasi</TabsTrigger>
-                <TabsTrigger value="pemakaian">Pemakaian</TabsTrigger>
+              <TabsList className="w-full min-w-max grid grid-cols-4 xl:inline-flex">
+                <TabsTrigger value="semua" className="text-xs sm:text-sm px-2 sm:px-3">Semua</TabsTrigger>
+                <TabsTrigger value="topup" className="text-xs sm:text-sm px-2 sm:px-3">Top Up</TabsTrigger>
+                <TabsTrigger value="alokasi" className="text-xs sm:text-sm px-2 sm:px-3">Alokasi</TabsTrigger>
+                <TabsTrigger value="pemakaian" className="text-xs sm:text-sm px-2 sm:px-3">Pemakaian</TabsTrigger>
               </TabsList>
             </Tabs>
+          </div>
 
-            {/* Search + Period + Status - Right side */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full xl:flex-1 xl:justify-end">
-              {/* Search */}
-              <div className="relative flex-1 xl:max-w-[280px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Cari user, email, atau reference ID..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              
-              {/* Period + Status */}
-              <div className="flex gap-3">
-                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Pilih periode" />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-popover">
-                    <SelectItem value="7d">7 Hari Terakhir</SelectItem>
-                    <SelectItem value="30d">30 Hari Terakhir</SelectItem>
-                    <SelectItem value="90d">90 Hari Terakhir</SelectItem>
-                    <SelectItem value="custom">Kustom</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-popover">
-                    <SelectItem value="semua">Semua</SelectItem>
-                    <SelectItem value="berhasil">Berhasil</SelectItem>
-                    <SelectItem value="gagal">Gagal</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Search + Period + Status - Stacked on mobile */}
+          <div className="flex flex-col gap-3">
+            {/* Search */}
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari user, email, atau reference ID..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-9 sm:h-10"
+              />
+            </div>
+            
+            {/* Period + Status - Side by side */}
+            <div className="flex gap-2 sm:gap-3">
+              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <SelectTrigger className="flex-1 h-9 sm:h-10 text-xs sm:text-sm">
+                  <SelectValue placeholder="Periode" />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-popover">
+                  <SelectItem value="7d">7 Hari</SelectItem>
+                  <SelectItem value="30d">30 Hari</SelectItem>
+                  <SelectItem value="90d">90 Hari</SelectItem>
+                  <SelectItem value="custom">Kustom</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="flex-1 h-9 sm:h-10 text-xs sm:text-sm">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-popover">
+                  <SelectItem value="semua">Semua</SelectItem>
+                  <SelectItem value="berhasil">Berhasil</SelectItem>
+                  <SelectItem value="gagal">Gagal</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Demo State Toggle (for development) */}
-          <div className="flex gap-2 flex-wrap">
-            <span className="text-xs text-muted-foreground mr-2">Demo State:</span>
+          {/* Demo State Toggle (for development) - Scrollable on mobile */}
+          <div className="flex gap-2 flex-wrap overflow-x-auto">
+            <span className="text-xs text-muted-foreground mr-2 shrink-0">Demo:</span>
             {(["data", "loading", "empty", "error"] as ViewState[]).map((state) => (
               <Button
                 key={state}
                 variant={viewState === state ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewState(state)}
-                className="text-xs h-7"
+                className="text-xs h-7 shrink-0"
               >
                 {state}
               </Button>
@@ -941,20 +942,20 @@ export default function SistemTokenIkhtisar() {
                   </Table>
                 </div>
 
-                {/* Pagination */}
-                <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                  <p className="text-sm text-muted-foreground">
+                {/* Pagination - Mobile optimized */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 pt-4 border-t">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Menampilkan 1-8 dari 96 aktivitas
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-between sm:justify-end">
                     <Button
                       variant="outline"
                       size="sm"
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage((p) => p - 1)}
+                      className="h-8 px-2 sm:px-3"
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      <span className="hidden sm:inline ml-1">Previous</span>
                     </Button>
                     <div className="flex gap-1">
                       {[1, 2, 3].map((page) => (
@@ -962,17 +963,17 @@ export default function SistemTokenIkhtisar() {
                           key={page}
                           variant={currentPage === page ? "default" : "outline"}
                           size="sm"
-                          className="w-8"
+                          className="w-7 sm:w-8 h-8"
                           onClick={() => setCurrentPage(page)}
                         >
                           {page}
                         </Button>
                       ))}
-                      <span className="px-2 text-muted-foreground">...</span>
+                      <span className="px-1 sm:px-2 text-muted-foreground hidden sm:inline">...</span>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-8"
+                        className="w-7 sm:w-8 h-8 hidden sm:inline-flex"
                         onClick={() => setCurrentPage(12)}
                       >
                         12
@@ -982,8 +983,8 @@ export default function SistemTokenIkhtisar() {
                       variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage((p) => p + 1)}
+                      className="h-8 px-2 sm:px-3"
                     >
-                      <span className="hidden sm:inline mr-1">Next</span>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>

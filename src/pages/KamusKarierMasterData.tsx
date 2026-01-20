@@ -314,109 +314,116 @@ const KamusKarierMasterData = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
             Master Data Kamus Karier
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Kelola data Kamus Karier agar siap tampil ke pengguna.
           </p>
         </div>
 
-        {/* Tab Button Group */}
-        <div className="flex flex-wrap gap-2">
-          {tabs.map((tab) => (
-            <Button
-              key={tab.id}
-              variant={activeTab === tab.id ? "default" : "outline"}
-              onClick={() => !tab.disabled && setActiveTab(tab.id)}
-              disabled={tab.disabled}
-              className={cn(
-                "transition-all",
-                activeTab === tab.id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "hover:bg-accent hover:text-accent-foreground",
-                tab.disabled && "opacity-50 cursor-not-allowed"
-              )}
-            >
-              {tab.label}
-            </Button>
-          ))}
+        {/* Tab Button Group - Scrollable on mobile */}
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-2 min-w-max">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "default" : "outline"}
+                onClick={() => !tab.disabled && setActiveTab(tab.id)}
+                disabled={tab.disabled}
+                size="sm"
+                className={cn(
+                  "transition-all text-xs sm:text-sm whitespace-nowrap",
+                  activeTab === tab.id
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "hover:bg-accent hover:text-accent-foreground",
+                  tab.disabled && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* Content based on active tab */}
         {activeTab === "profesi" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Section 1: Kontrol & Pencarian Data Profesi */}
-            <div className="bg-card border border-border rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-foreground mb-4">
+            <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+              <h2 className="text-sm font-semibold text-foreground mb-3 sm:mb-4">
                 Kontrol & Pencarian Data Profesi
               </h2>
-              <div className="flex flex-wrap gap-3">
-                {/* Filter Kategori */}
-                <Select value={kategoriFilter} onValueChange={handleKategoriChange}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Kategori" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border border-border z-50">
-                    {kategoriOptions.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              
+              {/* Filters - Stack on mobile */}
+              <div className="flex flex-col gap-3">
+                {/* Row 1: Kategori & Sub-kategori */}
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <Select value={kategoriFilter} onValueChange={handleKategoriChange}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="Kategori" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      {kategoriOptions.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                {/* Filter Sub-kategori */}
-                <Select value={subKategoriFilter} onValueChange={setSubKategoriFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sub-kategori" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border border-border z-50">
-                    {(subKategoriOptions[kategoriFilter] || ["Semua sub-kategori"]).map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <Select value={subKategoriFilter} onValueChange={setSubKategoriFilter}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="Sub-kategori" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      {(subKategoriOptions[kategoriFilter] || ["Semua sub-kategori"]).map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Row 2: RIASEC & Sort */}
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <Select value={riasecFilter} onValueChange={setRiasecFilter}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="RIASEC" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      {riasecOptions.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt === "Semua" ? "Semua RIASEC" : opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                {/* Filter RIASEC */}
-                <Select value={riasecFilter} onValueChange={setRiasecFilter}>
-                  <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder="RIASEC Dominan" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border border-border z-50">
-                    {riasecOptions.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt === "Semua" ? "Semua RIASEC" : opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <Select value={sortOption} onValueChange={setSortOption}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="Urutkan" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      {sortOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                {/* Sort */}
-                <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Urutkan" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border border-border z-50">
-                    {sortOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {/* Search Bar - Paling Kanan */}
-                <div className="relative flex-1 min-w-[250px]">
+                {/* Row 3: Search Bar */}
+                <div className="relative w-full">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Cari profesi… (nama/alias/RIASEC)"
-                    className="pl-10"
+                    className="pl-10 h-9 sm:h-10"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -435,45 +442,48 @@ const KamusKarierMasterData = () => {
             {/* Section 2: Tabel Data Profesi */}
             <div className="bg-card border border-border rounded-lg">
               {/* Table Header */}
-              <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex items-center gap-3">
+              <div className="p-3 sm:p-4 border-b border-border">
+                <div className="flex flex-col gap-3">
+                  {/* Title row */}
                   <div>
-                    <h2 className="text-base font-semibold text-foreground">
+                    <h2 className="text-sm sm:text-base font-semibold text-foreground">
                       Tabel Master Data Profesi
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Menampilkan {paginatedData.length} dari {totalItems} data profesi
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
+                  
+                  {/* Actions row */}
+                  <div className="flex flex-wrap items-center gap-2">
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={handleBulkDelete}
                       disabled={selectedIds.length === 0}
-                      className="gap-1.5"
+                      className="gap-1.5 h-8 text-xs"
                     >
-                      <Trash2 className="h-4 w-4" />
-                      Hapus Data
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Hapus Data</span>
+                      <span className="sm:hidden">Hapus</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleExport}
-                      className="gap-1.5"
+                      className="gap-1.5 h-8 text-xs"
                     >
-                      <Download className="h-4 w-4" />
-                      Ekspor Data
+                      <Download className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Ekspor Data</span>
+                      <span className="sm:hidden">Ekspor</span>
+                    </Button>
+                    <Button size="sm" className="gap-1.5 h-8 text-xs ml-auto">
+                      <Plus className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Tambah Data Profesi</span>
+                      <span className="sm:hidden">Tambah</span>
                     </Button>
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  className="gap-1.5"
-                >
-                  <Plus className="h-4 w-4" />
-                  Tambah Data Profesi
-                </Button>
               </div>
 
               {/* Table */}
