@@ -638,48 +638,50 @@ export default function MembershipFiturHakAkses() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Fitur & Hak Akses</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Fitur & Hak Akses</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Kelola master fitur, sub fitur, dan hak akses untuk konfigurasi membership.
           </p>
         </div>
 
-        {/* Tab Menu */}
-        <div className="flex gap-2 border-b border-border">
-          <button
-            onClick={() => setActiveTab("fitur")}
-            className={cn(
-              "px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
-              activeTab === "fitur"
-                ? "text-primary border-primary"
-                : "text-muted-foreground border-transparent hover:text-foreground"
-            )}
-          >
-            Fitur & Sub Fitur
-          </button>
-          <button
-            onClick={() => setActiveTab("hak-akses")}
-            className={cn(
-              "px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
-              activeTab === "hak-akses"
-                ? "text-primary border-primary"
-                : "text-muted-foreground border-transparent hover:text-foreground"
-            )}
-          >
-            Hak Akses
-          </button>
+        {/* Tab Menu - Scrollable on mobile */}
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-2 border-b border-border min-w-max">
+            <button
+              onClick={() => setActiveTab("fitur")}
+              className={cn(
+                "px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap",
+                activeTab === "fitur"
+                  ? "text-primary border-primary"
+                  : "text-muted-foreground border-transparent hover:text-foreground"
+              )}
+            >
+              Fitur & Sub Fitur
+            </button>
+            <button
+              onClick={() => setActiveTab("hak-akses")}
+              className={cn(
+                "px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap",
+                activeTab === "hak-akses"
+                  ? "text-primary border-primary"
+                  : "text-muted-foreground border-transparent hover:text-foreground"
+              )}
+            >
+              Hak Akses
+            </button>
+          </div>
         </div>
 
         {/* Tab Content: Fitur & Sub Fitur */}
         {activeTab === "fitur" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Section Header */}
             <div>
-              <h2 className="text-lg font-semibold">Fitur & Sub Fitur</h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-base sm:text-lg font-semibold">Fitur & Sub Fitur</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Kelola master fitur dan sub fitur sebagai dasar pembentukan entitlement/hak akses.
               </p>
             </div>
@@ -687,15 +689,15 @@ export default function MembershipFiturHakAkses() {
             {/* Callout - Collapsible */}
             <Collapsible>
               <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
-                    <p className="font-medium text-amber-800 dark:text-amber-200 text-sm">Catatan Penting</p>
+                <CollapsibleTrigger className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 shrink-0" />
+                    <p className="font-medium text-amber-800 dark:text-amber-200 text-xs sm:text-sm">Catatan Penting</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-amber-600 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="px-4 pb-4">
-                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-sm ml-8">
+                <CollapsibleContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-xs sm:text-sm ml-6 sm:ml-8">
                     <li>Data fitur & sub fitur akan menjadi referensi pada Tab Hak Akses untuk membentuk entitlement.</li>
                     <li>Data ini juga menjadi referensi pada halaman konfigurasi akses membership untuk mapping entitlement ke paket.</li>
                     <li>Nama dan slug harus konsisten dan tidak diubah sembarangan karena berdampak langsung pada struktur hak akses.</li>
@@ -704,35 +706,38 @@ export default function MembershipFiturHakAkses() {
               </div>
             </Collapsible>
 
-            {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* Toolbar - Stack on mobile */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari fitur berdasarkan nama atau slug…"
                   value={fiturSearch}
                   onChange={(e) => setFiturSearch(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 h-9 sm:h-10"
                 />
               </div>
-              <Select value={fiturStatusFilter} onValueChange={(v) => setFiturStatusFilter(v as typeof fiturStatusFilter)}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua</SelectItem>
-                  <SelectItem value="active">Aktif</SelectItem>
-                  <SelectItem value="inactive">Nonaktif</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={openAddFiturModal}>
-                <Plus className="h-4 w-4 mr-2" />
-                Tambah Fitur
-              </Button>
+              <div className="flex gap-2 sm:gap-3">
+                <Select value={fiturStatusFilter} onValueChange={(v) => setFiturStatusFilter(v as typeof fiturStatusFilter)}>
+                  <SelectTrigger className="w-[100px] sm:w-[140px] h-9 sm:h-10 text-xs sm:text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua</SelectItem>
+                    <SelectItem value="active">Aktif</SelectItem>
+                    <SelectItem value="inactive">Nonaktif</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={openAddFiturModal} size="sm" className="h-9 sm:h-10 text-xs sm:text-sm">
+                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Tambah Fitur</span>
+                  <span className="sm:hidden">Tambah</span>
+                </Button>
+              </div>
             </div>
 
             {/* Table */}
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
@@ -911,11 +916,11 @@ export default function MembershipFiturHakAkses() {
 
         {/* Tab Content: Hak Akses */}
         {activeTab === "hak-akses" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Header */}
             <div>
-              <h2 className="text-lg font-semibold">Hak Akses Fitur</h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-base sm:text-lg font-semibold">Hak Akses Fitur</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Kelola master entitlement sebagai dasar penyusunan hak akses dan konfigurasi membership.
               </p>
             </div>
@@ -923,15 +928,15 @@ export default function MembershipFiturHakAkses() {
             {/* Callout - Collapsible */}
             <Collapsible>
               <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
-                    <p className="font-medium text-amber-800 dark:text-amber-200 text-sm">Catatan Penting</p>
+                <CollapsibleTrigger className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 shrink-0" />
+                    <p className="font-medium text-amber-800 dark:text-amber-200 text-xs sm:text-sm">Catatan Penting</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-amber-600 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="px-4 pb-4">
-                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-sm ml-8">
+                <CollapsibleContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-xs sm:text-sm ml-6 sm:ml-8">
                     <li>Kategori aksi adalah standar aksi yang dipakai saat membentuk entitlement.</li>
                     <li>Entitlement dibentuk dari kombinasi objek (Fitur/Sub Fitur) dan kategori aksi.</li>
                     <li>Perubahan slug pada kategori aksi atau entitlement yang sudah digunakan dapat mempengaruhi konsistensi aturan akses.</li>
@@ -1042,70 +1047,77 @@ export default function MembershipFiturHakAkses() {
             </Collapsible>
 
             {/* Section 2: Master Hak Akses */}
-            <div className="space-y-4">
-              <h3 className="font-semibold">Master Hak Akses</h3>
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="font-semibold text-sm sm:text-base">Master Hak Akses</h3>
               
-              {/* Filters */}
-              <div className="flex flex-wrap gap-3">
-                <div className="relative flex-1 min-w-[200px]">
+              {/* Filters - Stack on mobile */}
+              <div className="flex flex-col gap-3">
+                {/* Search */}
+                <div className="relative w-full">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Cari nama hak akses, key, fitur, atau sub fitur…"
+                    placeholder="Cari nama hak akses, key, fitur..."
                     value={hakAksesSearch}
                     onChange={(e) => setHakAksesSearch(e.target.value)}
-                    className="pl-9"
+                    className="pl-9 h-9 sm:h-10"
                   />
                 </div>
-                <Select value={hakAksesStatusFilter} onValueChange={(v) => setHakAksesStatusFilter(v as typeof hakAksesStatusFilter)}>
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua</SelectItem>
-                    <SelectItem value="active">Aktif</SelectItem>
-                    <SelectItem value="inactive">Nonaktif</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={hakAksesObjectFilter} onValueChange={(v) => setHakAksesObjectFilter(v as typeof hakAksesObjectFilter)}>
-                  <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder="Objek Kontrol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua Objek</SelectItem>
-                    <SelectItem value="fitur">Berbasis Fitur</SelectItem>
-                    <SelectItem value="sub_fitur">Berbasis Sub Fitur</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={hakAksesFiturFilter} onValueChange={setHakAksesFiturFilter}>
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Fitur" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua Fitur</SelectItem>
-                    {fiturData.map((f) => (
-                      <SelectItem key={f.id} value={f.slug}>{f.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={hakAksesKategoriFilter} onValueChange={setHakAksesKategoriFilter}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Kategori Aksi" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua Kategori</SelectItem>
-                    {kategoriAksiData.filter((k) => k.status === "active").map((k) => (
-                      <SelectItem key={k.id} value={k.slug}>{k.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button onClick={openAddHakAksesModal}>
+                
+                {/* Filter dropdowns - Grid on mobile */}
+                <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 sm:flex-wrap">
+                  <Select value={hakAksesStatusFilter} onValueChange={(v) => setHakAksesStatusFilter(v as typeof hakAksesStatusFilter)}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[130px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua</SelectItem>
+                      <SelectItem value="active">Aktif</SelectItem>
+                      <SelectItem value="inactive">Nonaktif</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={hakAksesObjectFilter} onValueChange={(v) => setHakAksesObjectFilter(v as typeof hakAksesObjectFilter)}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[160px]">
+                      <SelectValue placeholder="Objek" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua</SelectItem>
+                      <SelectItem value="fitur">Fitur</SelectItem>
+                      <SelectItem value="sub_fitur">Sub Fitur</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={hakAksesFiturFilter} onValueChange={setHakAksesFiturFilter}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[140px]">
+                      <SelectValue placeholder="Fitur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua</SelectItem>
+                      {fiturData.map((f) => (
+                        <SelectItem key={f.id} value={f.slug}>{f.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={hakAksesKategoriFilter} onValueChange={setHakAksesKategoriFilter}>
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[150px]">
+                      <SelectValue placeholder="Kategori" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua</SelectItem>
+                      {kategoriAksiData.filter((k) => k.status === "active").map((k) => (
+                        <SelectItem key={k.id} value={k.slug}>{k.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Add button */}
+                <Button onClick={openAddHakAksesModal} size="sm" className="w-full sm:w-auto h-9 sm:h-10">
                   <Plus className="h-4 w-4 mr-2" />
                   Tambah Hak Akses
                 </Button>
               </div>
 
               {/* Table */}
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-hidden overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/50">
