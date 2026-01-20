@@ -21,6 +21,7 @@ import {
   BarChart3,
   BookOpen,
   Crown,
+  Coins,
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -248,15 +249,35 @@ export function AppSidebar({ className, onClose, isCollapsed: controlledCollapse
                 href="/membership/status"
                 isActive={location.pathname === "/membership/status"}
               />
+            </SidebarItem>
+            <SidebarItem
+              icon={Coins}
+              label="Sistem Token"
+              isCollapsed={effectiveCollapsed}
+              hasDropdown
+              isOpen={isDropdownOpen("sistem-token")}
+              onToggle={() => toggleDropdown("sistem-token")}
+              isActive={location.pathname.startsWith("/sistem-token")}
+            >
               <SidebarDropdownItem
-                label="Sistem Poin"
-                href="/membership/sistem-poin"
-                isActive={location.pathname === "/membership/sistem-poin"}
+                label="Ikhtisar Token"
+                href="/sistem-token/ikhtisar"
+                isActive={location.pathname === "/sistem-token/ikhtisar"}
               />
               <SidebarDropdownItem
-                label="Sistem Token"
-                href="/membership/sistem-token"
-                isActive={location.pathname === "/membership/sistem-token"}
+                label="Pengadaan Token"
+                href="/sistem-token/pengadaan"
+                isActive={location.pathname === "/sistem-token/pengadaan"}
+              />
+              <SidebarDropdownItem
+                label="Token Membership"
+                href="/sistem-token/membership"
+                isActive={location.pathname === "/sistem-token/membership"}
+              />
+              <SidebarDropdownItem
+                label="Riwayat Token"
+                href="/sistem-token/riwayat"
+                isActive={location.pathname === "/sistem-token/riwayat"}
               />
             </SidebarItem>
             <SidebarItem
