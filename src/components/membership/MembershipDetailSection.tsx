@@ -200,13 +200,8 @@ export function MembershipDetailSection({
               </h2>
               <div className="flex items-center gap-2 mt-0.5">
                 {/* Category Badge */}
-                <span className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium",
-                  status.category === "paid" 
-                    ? "bg-amber-50 text-amber-700 border border-amber-200" 
-                    : "bg-slate-100 text-slate-600 border border-slate-200"
-                )}>
-                  {status.category === "paid" ? "Premium" : "Free"}
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                  {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
                 </span>
                 
                 {/* Status Badge */}
@@ -248,13 +243,8 @@ export function MembershipDetailSection({
             
           <div className="space-y-1">
               <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Kategori</Label>
-              <div className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
-                status.category === "paid" 
-                  ? "bg-amber-50 text-amber-700 border border-amber-200" 
-                  : "bg-slate-50 text-slate-600 border border-slate-200"
-              )}>
-                {status.category === "paid" ? "Premium" : "Free Tier"}
+              <div className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
+                {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
               </div>
             </div>
             <div className="space-y-1">
@@ -282,8 +272,6 @@ export function MembershipDetailSection({
               <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Terakhir Diubah</Label>
               <p className="text-xs text-muted-foreground">
                 {status.lastUpdated} WIB
-                <br />
-                <span className="text-foreground/70">oleh {status.lastUpdatedBy}</span>
               </p>
             </div>
             
