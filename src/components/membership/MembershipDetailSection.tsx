@@ -223,62 +223,55 @@ export function MembershipDetailSection({
         </div>
       </div>
 
-      {/* Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-        {/* Left Column - Summary */}
-        <Card className="h-fit">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Ringkasan Paket</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Nama Paket</Label>
-              <p className="text-sm font-medium">{status.name}</p>
-            </div>
-            
-            <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Kategori</Label>
-              <p className="text-sm font-medium capitalize">{status.category} Membership</p>
-            </div>
-            
-          <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Kategori</Label>
-              <div className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
+      {/* Vertical Layout - Summary on top, Configuration below */}
+      <div className="space-y-6">
+        {/* Summary Card - Horizontal layout */}
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">Nama Paket:</Label>
+                <span className="text-sm font-medium">{status.name}</span>
               </div>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Status</Label>
-              <div className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
-                status.isActive 
-                  ? "bg-success/10 text-success border border-success/20" 
-                  : "bg-destructive/10 text-destructive border border-destructive/20"
-              )}>
+              
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">Kategori:</Label>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
+                  {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">Status:</Label>
                 <span className={cn(
-                  "w-2 h-2 rounded-full",
-                  status.isActive ? "bg-success animate-pulse" : "bg-destructive"
-                )} />
-                {status.isActive ? "Aktif" : "Nonaktif"}
+                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium",
+                  status.isActive 
+                    ? "bg-success/10 text-success" 
+                    : "bg-destructive/10 text-destructive"
+                )}>
+                  <span className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    status.isActive ? "bg-success" : "bg-destructive"
+                  )} />
+                  {status.isActive ? "Aktif" : "Nonaktif"}
+                </span>
               </div>
-            </div>
-            {status.description && (
-              <div className="space-y-1">
-                <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Deskripsi</Label>
-                <p className="text-sm text-muted-foreground leading-relaxed">{status.description}</p>
+              
+              {status.description && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs text-muted-foreground">Deskripsi:</Label>
+                  <span className="text-sm text-muted-foreground">{status.description}</span>
+                </div>
+              )}
+              
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">Terakhir Diubah:</Label>
+                <span className="text-xs text-muted-foreground">{status.lastUpdated} WIB</span>
               </div>
-            )}
-            <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Terakhir Diubah</Label>
-              <p className="text-xs text-muted-foreground">
-                {status.lastUpdated} WIB
-              </p>
-            </div>
-            
-            <div className="pt-2">
+              
               <Button 
                 variant="outline" 
-                className="w-full gap-2 border-dashed" 
+                className="gap-2 border-dashed ml-auto" 
                 size="sm"
                 onClick={onEditMetadata}
               >
@@ -289,7 +282,7 @@ export function MembershipDetailSection({
           </CardContent>
         </Card>
 
-        {/* Right Column - Configuration */}
+        {/* Configuration Card - Full width */}
         <Card>
           <CardContent className="pt-6">
             {isUnpaid ? (
