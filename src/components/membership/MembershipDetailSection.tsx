@@ -176,114 +176,82 @@ export function MembershipDetailSection({
 
   return (
     <div className="space-y-6">
-      {/* Header with Back Button and Title */}
-      <div className="flex items-center gap-4">
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={handleCancel}
-          className="h-10 w-10 shrink-0 rounded-xl border-2 hover:bg-muted"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3">
-            <img 
-              src={status.emblem} 
-              alt={status.name} 
-              className="h-10 w-10 object-contain"
-            />
-            <div>
-              <h2 className="text-xl font-bold text-foreground truncate">
-                {status.name}
-              </h2>
-              <div className="flex items-center gap-2 mt-0.5">
-                {/* Category Badge */}
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                  {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
-                </span>
-                
-                {/* Status Badge */}
-                <span className={cn(
-                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
-                  status.isActive 
-                    ? "bg-success/10 text-success" 
-                    : "bg-destructive/10 text-destructive"
-                )}>
+      {/* Clean Header Card - Combined info */}
+      <Card className="bg-gradient-to-r from-muted/30 to-muted/10 border-border/60">
+        <CardContent className="py-5">
+          <div className="flex items-center gap-4">
+            {/* Back Button */}
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={handleCancel}
+              className="h-10 w-10 shrink-0 rounded-xl border-2 hover:bg-background"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            
+            {/* Emblem & Package Info */}
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <img 
+                src={status.emblem} 
+                alt={status.name} 
+                className="h-12 w-12 object-contain shrink-0"
+              />
+              
+              <div className="flex-1 min-w-0">
+                {/* Package Name & Badges - Row 1 */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h2 className="text-xl font-bold text-foreground">
+                    {status.name}
+                  </h2>
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                    {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
+                  </span>
                   <span className={cn(
-                    "w-1.5 h-1.5 rounded-full",
-                    status.isActive ? "bg-success" : "bg-destructive"
-                  )} />
-                  {status.isActive ? "Aktif" : "Nonaktif"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Vertical Layout - Summary on top, Configuration below */}
-      <div className="space-y-6">
-        {/* Summary Card - Horizontal layout */}
-        <Card>
-          <CardContent className="py-4">
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">Nama Paket:</Label>
-                <span className="text-sm font-medium">{status.name}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">Kategori:</Label>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                  {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">Status:</Label>
-                <span className={cn(
-                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium",
-                  status.isActive 
-                    ? "bg-success/10 text-success" 
-                    : "bg-destructive/10 text-destructive"
-                )}>
-                  <span className={cn(
-                    "w-1.5 h-1.5 rounded-full",
-                    status.isActive ? "bg-success" : "bg-destructive"
-                  )} />
-                  {status.isActive ? "Aktif" : "Nonaktif"}
-                </span>
-              </div>
-              
-              {status.description && (
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground">Deskripsi:</Label>
-                  <span className="text-sm text-muted-foreground">{status.description}</span>
+                    "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold",
+                    status.isActive 
+                      ? "bg-emerald-50 text-emerald-600 border border-emerald-200" 
+                      : "bg-red-50 text-red-600 border border-red-200"
+                  )}>
+                    <span className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      status.isActive ? "bg-emerald-500" : "bg-red-500"
+                    )} />
+                    {status.isActive ? "Aktif" : "Nonaktif"}
+                  </span>
                 </div>
-              )}
-              
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">Terakhir Diubah:</Label>
-                <span className="text-xs text-muted-foreground">{status.lastUpdated} WIB</span>
+                
+                {/* Description & Last Updated - Row 2 */}
+                <div className="flex items-center gap-4 mt-1.5 text-sm text-muted-foreground">
+                  {status.description && (
+                    <>
+                      <span className="truncate max-w-md">{status.description}</span>
+                      <span className="text-border">•</span>
+                    </>
+                  )}
+                  <span className="text-xs shrink-0">
+                    Diperbarui {status.lastUpdated} WIB
+                  </span>
+                </div>
               </div>
-              
-              <Button 
-                variant="outline" 
-                className="gap-2 border-dashed ml-auto" 
-                size="sm"
-                onClick={onEditMetadata}
-              >
-                <Edit2 className="h-3.5 w-3.5" />
-                Edit Metadata
-              </Button>
             </div>
-          </CardContent>
-        </Card>
+            
+            {/* Edit Button */}
+            <Button 
+              variant="outline" 
+              className="gap-2 shrink-0" 
+              size="sm"
+              onClick={onEditMetadata}
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+              Edit Metadata
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Configuration Card - Full width */}
-        <Card>
+      {/* Configuration Card - Full width */}
+      <Card>
           <CardContent className="pt-6">
             {isUnpaid ? (
               /* Unpaid: Only show Access Mapping (no tabs needed) */
@@ -677,7 +645,6 @@ export function MembershipDetailSection({
             )}
           </CardContent>
         </Card>
-      </div>
     </div>
   );
 }
