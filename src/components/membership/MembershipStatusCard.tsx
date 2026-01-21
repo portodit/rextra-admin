@@ -103,11 +103,13 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
   return (
     <div
       className={cn(
-        "group relative w-full min-h-[200px] rounded-2xl border-2 p-5 cursor-pointer transition-all duration-300",
-        "hover:shadow-xl hover:scale-[1.02]",
-        tierStyle.gradient,
-        tierStyle.border,
-        isSelected && "ring-2 ring-primary ring-offset-2 shadow-xl scale-[1.02]"
+        "group relative w-full min-h-[200px] rounded-2xl border p-5 cursor-pointer transition-all duration-300",
+        // Default: white bg with gray border
+        "bg-white border-slate-200",
+        // Hover: light blue bg with blue glow
+        "hover:bg-sky-50/70 hover:border-sky-300 hover:shadow-[0_0_20px_-3px_rgba(14,165,233,0.4)]",
+        // Selected state
+        isSelected && "bg-sky-50/70 border-sky-400 ring-2 ring-sky-400/30 shadow-[0_0_25px_-3px_rgba(14,165,233,0.5)]"
       )}
       onClick={onSelect}
     >
