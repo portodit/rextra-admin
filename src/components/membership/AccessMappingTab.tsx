@@ -417,20 +417,24 @@ export function AccessMappingTab({ packageId, packageName }: AccessMappingTabPro
           </p>
         </div>
 
-        {/* Summary Chips */}
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline" className="h-6 px-2.5 bg-background">
-            Total mapping: {stats.total}
-          </Badge>
-          <Badge variant="outline" className="h-6 px-2.5 bg-background">
-            Tanpa batas: {stats.unlimited}
-          </Badge>
-          <Badge variant="outline" className="h-6 px-2.5 bg-background">
-            Token: {stats.token}
-          </Badge>
-          <Badge variant="outline" className="h-6 px-2.5 bg-background">
-            Limit: {stats.limit}
-          </Badge>
+        {/* Summary Stats - Modern Grid */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-2xl font-bold text-slate-900">{stats.total}</span>
+            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Total</span>
+          </div>
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span className="text-2xl font-bold text-emerald-600">{stats.unlimited}</span>
+            <span className="text-[10px] font-medium text-emerald-600 uppercase tracking-wider">Unlimited</span>
+          </div>
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-amber-50 border border-amber-200">
+            <span className="text-2xl font-bold text-amber-600">{stats.token}</span>
+            <span className="text-[10px] font-medium text-amber-600 uppercase tracking-wider">Token</span>
+          </div>
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-blue-50 border border-blue-200">
+            <span className="text-2xl font-bold text-blue-600">{stats.limit}</span>
+            <span className="text-[10px] font-medium text-blue-600 uppercase tracking-wider">Limit</span>
+          </div>
         </div>
 
         {/* Toolbar */}

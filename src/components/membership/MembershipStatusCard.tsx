@@ -111,11 +111,8 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
       )}
       onClick={onSelect}
     >
-      <div className={cn(
-        "absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-wide text-white shadow-sm",
-        tierStyle.tagBg
-      )}>
-        {status.category === "paid" ? "Premium" : "Free"}
+      <div className="absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-slate-800 text-white shadow-sm">
+        {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
       </div>
 
       {/* Status Indicator - Top Left */}
