@@ -2,14 +2,20 @@ import { MemberUser, JourneyEvent } from "./types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Crown, Award, Star, Zap, CircleDot, RefreshCw, 
-  Coins, Gift, Lock, ExternalLink, Calendar, Clock, Circle 
+  RefreshCw, Coins, Gift, Lock, ExternalLink, Calendar, Clock,
+  ArrowRight, ShoppingCart, TrendingUp, TrendingDown, Play, XCircle, RotateCcw
 } from "lucide-react";
 import { generateMockJourneyEvents } from "./mockData";
 import { useMemo } from "react";
+
+// Import emblem assets
+import emblemStarter from "@/assets/emblem-starter.png";
+import emblemBasic from "@/assets/emblem-basic.png";
+import emblemPro from "@/assets/emblem-pro.png";
+import emblemMax from "@/assets/emblem-max.png";
 
 interface UserDetailDrawerProps {
   user: MemberUser | null;
@@ -17,12 +23,29 @@ interface UserDetailDrawerProps {
   onClose: () => void;
 }
 
-const tierIcons: Record<string, React.ElementType> = {
-  Max: Crown,
-  Pro: Award,
-  Basic: Star,
-  Starter: Zap,
-  Standard: CircleDot,
+const tierEmblems: Record<string, string> = {
+  Max: emblemMax,
+  Pro: emblemPro,
+  Basic: emblemBasic,
+  Starter: emblemStarter,
+  Standard: emblemStarter,
+};
+
+const tierColors: Record<string, { bg: string; text: string; border: string }> = {
+  Max: { bg: "bg-amber-100/60", text: "text-amber-700", border: "border-amber-200" },
+  Pro: { bg: "bg-blue-100/60", text: "text-blue-700", border: "border-blue-200" },
+  Basic: { bg: "bg-emerald-100/60", text: "text-emerald-700", border: "border-emerald-200" },
+  Starter: { bg: "bg-orange-100/60", text: "text-orange-700", border: "border-orange-200" },
+  Standard: { bg: "bg-slate-100/60", text: "text-slate-600", border: "border-slate-200" },
+};
+
+const eventIcons: Record<string, React.ElementType> = {
+  "First Purchase": ShoppingCart,
+  "Renewal": RotateCcw,
+  "Upgrade": TrendingUp,
+  "Downgrade": TrendingDown,
+  "Trial Start": Play,
+  "Expired": XCircle,
 };
 
 export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps) {
@@ -31,18 +54,45 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
     [user]
   );
 
+  // Calculate summary stats
+  const summaryStats = useMemo(() => {
+    if (!journeyEvents.length) return { totalPurchase: 0, totalDuration: 0, transactionCount: 0 };
+    
+    const purchaseEvents = journeyEvents.filter(e => !e.isFuture && e.total !== undefined);
+    const totalPurchase = purchaseEvents.reduce((sum, e) => sum + (e.total || 0), 0);
+    const totalDuration = purchaseEvents.reduce((sum, e) => {
+      const durationMatch = e.duration?.match(/(\d+)/);
+      return sum + (durationMatch ? parseInt(durationMatch[1]) : 0);
+    }, 0);
+    
+    return { totalPurchase, totalDuration, transactionCount: purchaseEvents.length };
+  }, [journeyEvents]);
+
   if (!user) return null;
 
-  const TierIcon = tierIcons[user.tier] || CircleDot;
+  const tierColor = tierColors[user.tier] || tierColors.Standard;
+  const tierEmblem = tierEmblems[user.tier] || emblemStarter;
 
   const getCategoryBadge = () => {
     switch (user.category) {
       case "REXTRA Club":
-        return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">REXTRA Club</Badge>;
+        return (
+          <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
+            REXTRA CLUB
+          </Badge>
+        );
       case "Trial Club":
-        return <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100 border-0">Trial Club</Badge>;
+        return (
+          <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
+            TRIAL CLUB
+          </Badge>
+        );
       case "Non-Club":
-        return <Badge className="bg-slate-100 text-slate-600 hover:bg-slate-100 border-0">Non-Club</Badge>;
+        return (
+          <Badge className="absolute -top-2 -right-2 bg-slate-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
+            NON CLUB
+          </Badge>
+        );
     }
   };
 
@@ -52,51 +102,69 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
         <SheetHeader className="p-4 md:p-6 border-b border-border">
-          <SheetTitle className="text-left">{user.name}</SheetTitle>
+          <SheetTitle className="text-left text-lg">Detail Status Membership</SheetTitle>
         </SheetHeader>
 
         <ScrollArea className="flex-1">
           <div className="p-4 md:p-6 space-y-6">
-            {/* Status Saat Ini */}
-            <section className="border border-border/60 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Status Saat Ini
+            {/* STATUS MEMBERSHIP TERKINI */}
+            <section className="relative border border-border/60 rounded-xl p-4 space-y-4">
+              {getCategoryBadge()}
+              
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                STATUS MEMBERSHIP TERKINI
               </h3>
               
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-primary">
-                  <TierIcon className="h-5 w-5" />
-                  <span className="font-semibold text-lg">{user.tier} Plan</span>
+              {/* Tier Display with Emblem */}
+              <div className={`flex items-center gap-4 p-3 rounded-xl ${tierColor.bg} ${tierColor.border} border`}>
+                <img 
+                  src={tierEmblem} 
+                  alt={user.tier} 
+                  className="h-14 w-14 object-contain drop-shadow-md"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xl font-bold ${tierColor.text}`}>{user.tier}</span>
+                    <Badge className={`${tierColor.bg} ${tierColor.text} ${tierColor.border} border text-[10px] font-medium`}>
+                      Plan
+                    </Badge>
+                  </div>
+                  {user.autoRenew && (
+                    <div className="flex items-center gap-1 mt-1 text-primary">
+                      <RefreshCw className="h-3 w-3" />
+                      <span className="text-xs font-medium">Auto-renew Aktif</span>
+                    </div>
+                  )}
                 </div>
-                {getCategoryBadge()}
               </div>
 
+              {/* User Info Grid */}
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Nama</p>
+                  <p className="text-xs text-muted-foreground">Nama</p>
                   <p className="font-medium">{user.name}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Email</p>
+                  <p className="text-xs text-muted-foreground">Email</p>
                   <p className="font-medium truncate">{user.email}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">User ID</p>
+                  <p className="text-xs text-muted-foreground">User ID</p>
                   <p className="font-medium font-mono text-xs">{user.userId}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Tanggal Mulai</p>
+                  <p className="text-xs text-muted-foreground">Tanggal Mulai</p>
                   <p className="font-medium">{user.startDate.toLocaleDateString("id-ID")}</p>
                 </div>
                 {user.endDate && (
                   <>
                     <div>
-                      <p className="text-muted-foreground">Tanggal Berakhir</p>
+                      <p className="text-xs text-muted-foreground">Tanggal Berakhir</p>
                       <p className="font-medium">{user.endDate.toLocaleDateString("id-ID")}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Sisa Durasi</p>
-                      <p className={`font-medium ${
+                      <p className="text-xs text-muted-foreground">Sisa Durasi</p>
+                      <p className={`font-semibold ${
                         user.validityStatus === "Expired" ? "text-red-600" :
                         user.validityStatus === "Expiring" ? "text-amber-600" :
                         "text-foreground"
@@ -108,148 +176,211 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
                     </div>
                   </>
                 )}
-                <div className="col-span-2">
-                  <p className="text-muted-foreground">Auto-renew</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <RefreshCw className={`h-4 w-4 ${user.autoRenew ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <span className="font-medium">{user.autoRenew ? 'Aktif' : 'Nonaktif'}</span>
-                  </div>
-                </div>
               </div>
             </section>
 
-            {/* Benefit Saat Ini */}
-            <section className="border border-border/60 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Benefit Saat Ini
+            {/* BENEFIT STATUS MEMBERSHIP */}
+            <section className="border border-border/60 rounded-xl p-4 space-y-4">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                BENEFIT STATUS MEMBERSHIP
               </h3>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Coins className="h-4 w-4 text-amber-500" />
-                    <span className="text-sm">Saldo Token</span>
+                <div className="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-100 rounded-lg">
+                      <Coins className="h-4 w-4 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Saldo Token</p>
+                      <p className="font-semibold">{user.tokenBalance.toLocaleString("id-ID")} token</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-semibold">{user.tokenBalance.toLocaleString("id-ID")} token</span>
-                    <Button variant="link" size="sm" className="h-auto p-0 ml-2 text-xs">
-                      Lihat Riwayat <ExternalLink className="h-3 w-3 ml-1" />
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Riwayat
+                  </Button>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Gift className="h-4 w-4 text-violet-500" />
-                    <span className="text-sm">Total Poin</span>
+                <div className="flex items-center justify-between p-3 bg-violet-50/50 rounded-lg border border-violet-100">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-violet-100 rounded-lg">
+                      <Gift className="h-4 w-4 text-violet-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Total Poin</p>
+                      <p className="font-semibold">{user.pointsBalance.toLocaleString("id-ID")} poin</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-semibold">{user.pointsBalance.toLocaleString("id-ID")} poin</span>
-                    <Button variant="link" size="sm" className="h-auto p-0 ml-2 text-xs">
-                      Lihat Riwayat <ExternalLink className="h-3 w-3 ml-1" />
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Riwayat
+                  </Button>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Lock className="h-4 w-4 text-sky-500" />
-                    <span className="text-sm">Akses Fitur</span>
+                <div className="flex items-center justify-between p-3 bg-sky-50/50 rounded-lg border border-sky-100">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-sky-100 rounded-lg">
+                      <Lock className="h-4 w-4 text-sky-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Akses Fitur</p>
+                      <p className="font-semibold">{user.entitlementCount} entitlement aktif</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-semibold">{user.entitlementCount} entitlement aktif</span>
-                    <Button variant="link" size="sm" className="h-auto p-0 ml-2 text-xs">
-                      Lihat Detail <ExternalLink className="h-3 w-3 ml-1" />
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Detail
+                  </Button>
                 </div>
               </div>
             </section>
 
-            {/* Timeline Journey */}
-            <section className="border border-border/60 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Timeline Journey (Riwayat Langganan)
+            {/* Summary Stats */}
+            <section className="border border-border/60 rounded-xl p-4 space-y-4">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                RINGKASAN MEMBERSHIP
               </h3>
-
-              <div className="relative">
-                {journeyEvents.map((event, index) => (
-                  <div key={event.id} className="flex gap-3 pb-6 last:pb-0">
-                    {/* Timeline dot and line */}
-                    <div className="flex flex-col items-center">
-                      <div className={`w-3 h-3 rounded-full mt-1 ${
-                        event.isFuture 
-                          ? 'border-2 border-muted-foreground bg-background' 
-                          : 'bg-primary'
-                      }`} />
-                      {index < journeyEvents.length - 1 && (
-                        <div className="w-0.5 flex-1 bg-border mt-1" />
-                      )}
-                    </div>
-
-                    {/* Event content */}
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        <span>{event.date.toLocaleDateString("id-ID")}</span>
-                        {!event.isFuture && (
-                          <>
-                            <Clock className="h-3 w-3 ml-1" />
-                            <span>{event.date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB</span>
-                          </>
-                        )}
-                      </div>
-                      <p className={`font-medium ${event.isFuture ? 'text-muted-foreground' : 'text-foreground'}`}>
-                        {event.title}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Status: {event.statusBefore} → {event.statusAfter}
-                      </p>
-                      {event.duration && (
-                        <p className="text-sm text-muted-foreground">Durasi: {event.duration}</p>
-                      )}
-                      {event.total && (
-                        <p className="text-sm text-muted-foreground">Total: {formatCurrency(event.total)}</p>
-                      )}
-                      {event.promoCode && (
-                        <p className="text-sm text-muted-foreground">
-                          Promo: {event.promoCode} ({formatCurrency(event.promoDiscount || 0)})
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <p className="text-lg font-bold text-foreground">{summaryStats.transactionCount}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">Total Transaksi</p>
+                </div>
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <p className="text-lg font-bold text-foreground">{summaryStats.totalDuration}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">Total Bulan</p>
+                </div>
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <p className="text-sm font-bold text-foreground">{formatCurrency(summaryStats.totalPurchase)}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">Total Bayar</p>
+                </div>
               </div>
             </section>
 
-            {/* Riwayat Transaksi Terakhir */}
-            <section className="border border-border/60 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Riwayat Transaksi (10 terakhir)
-              </h3>
+            {/* Tabs for Timeline & Transactions */}
+            <section className="border border-border/60 rounded-xl overflow-hidden">
+              <Tabs defaultValue="transactions" className="w-full">
+                <TabsList className="w-full bg-muted/30 rounded-none border-b border-border p-0 h-auto">
+                  <TabsTrigger 
+                    value="transactions" 
+                    className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent py-3 text-sm font-medium"
+                  >
+                    Riwayat Transaksi
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="timeline" 
+                    className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent py-3 text-sm font-medium"
+                  >
+                    Timeline Journey
+                  </TabsTrigger>
+                </TabsList>
 
-              <div className="space-y-2">
-                {journeyEvents
-                  .filter((e) => !e.isFuture && e.total !== undefined)
-                  .slice(0, 4)
-                  .map((event) => (
-                    <div key={event.id} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
-                      <div>
-                        <p className="font-medium">{event.title.split(" ")[0]}</p>
-                        <p className="text-xs text-muted-foreground">{event.date.toLocaleDateString("id-ID")}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{event.duration || "-"}</p>
-                        <p className="text-xs text-muted-foreground">{event.total ? formatCurrency(event.total) : "-"}</p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+                <TabsContent value="transactions" className="p-4 mt-0 space-y-3">
+                  {journeyEvents
+                    .filter((e) => !e.isFuture && e.total !== undefined)
+                    .slice(0, 10)
+                    .map((event) => {
+                      const EventIcon = eventIcons[event.title.split(" ")[0] + " " + (event.title.split(" ")[1] || "")] || ShoppingCart;
+                      return (
+                        <div key={event.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-border/50 hover:bg-muted/40 transition-colors">
+                          <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                            <EventIcon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">{event.title}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-muted-foreground">
+                                {event.date.toLocaleDateString("id-ID")}
+                              </span>
+                              {event.duration && (
+                                <>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className="text-xs text-muted-foreground">{event.duration}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="font-semibold text-sm">{event.total ? formatCurrency(event.total) : "-"}</p>
+                            <div className="flex items-center gap-1 justify-end mt-0.5">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{event.statusBefore}</span>
+                              <ArrowRight className="h-2.5 w-2.5 text-muted-foreground" />
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">{event.statusAfter}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  
+                  <Button variant="outline" size="sm" className="w-full mt-2">
+                    Lihat Semua di Tab Transaksi
+                    <ExternalLink className="h-3.5 w-3.5 ml-2" />
+                  </Button>
+                </TabsContent>
 
-              <Button variant="outline" size="sm" className="w-full">
-                Lihat Semua Transaksi
-                <ExternalLink className="h-3.5 w-3.5 ml-2" />
-              </Button>
+                <TabsContent value="timeline" className="p-4 mt-0">
+                  <div className="relative pl-6">
+                    {/* Vertical line */}
+                    <div className="absolute left-[9px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-border" />
+                    
+                    {journeyEvents.map((event, index) => {
+                      const EventIcon = eventIcons[event.title.split(" ")[0] + " " + (event.title.split(" ")[1] || "")] || ShoppingCart;
+                      return (
+                        <div key={event.id} className="relative pb-6 last:pb-0">
+                          {/* Timeline dot */}
+                          <div className={`absolute -left-6 top-1 w-5 h-5 rounded-full flex items-center justify-center ${
+                            event.isFuture 
+                              ? 'bg-muted border-2 border-border' 
+                              : 'bg-primary shadow-md shadow-primary/30'
+                          }`}>
+                            {!event.isFuture && <EventIcon className="h-2.5 w-2.5 text-primary-foreground" />}
+                          </div>
+
+                          {/* Event content */}
+                          <div className={`ml-2 p-3 rounded-lg border ${
+                            event.isFuture 
+                              ? 'bg-muted/30 border-dashed border-muted-foreground/30' 
+                              : 'bg-card border-border/50 shadow-sm'
+                          }`}>
+                            <div className="flex items-center justify-between">
+                              <p className={`font-medium text-sm ${event.isFuture ? 'text-muted-foreground' : 'text-foreground'}`}>
+                                {event.title}
+                              </p>
+                              {event.total && !event.isFuture && (
+                                <span className="text-xs font-semibold text-primary">{formatCurrency(event.total)}</span>
+                              )}
+                            </div>
+                            
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Calendar className="h-3 w-3" />
+                                <span>{event.date.toLocaleDateString("id-ID")}</span>
+                              </div>
+                              {!event.isFuture && (
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <Clock className="h-3 w-3" />
+                                  <span>{event.date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="flex items-center gap-1.5 mt-2">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${tierColors[event.statusBefore]?.bg || 'bg-slate-100'} ${tierColors[event.statusBefore]?.text || 'text-slate-600'} font-medium`}>
+                                {event.statusBefore}
+                              </span>
+                              <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${tierColors[event.statusAfter]?.bg || 'bg-slate-100'} ${tierColors[event.statusAfter]?.text || 'text-slate-600'} font-medium`}>
+                                {event.statusAfter}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </section>
           </div>
         </ScrollArea>

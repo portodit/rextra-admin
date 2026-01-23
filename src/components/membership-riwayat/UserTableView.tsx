@@ -4,21 +4,56 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RefreshCw, Eye, AlertTriangle } from "lucide-react";
 
+// Import emblem assets
+import emblemStarter from "@/assets/emblem-starter.png";
+import emblemBasic from "@/assets/emblem-basic.png";
+import emblemPro from "@/assets/emblem-pro.png";
+import emblemMax from "@/assets/emblem-max.png";
+
 interface UserTableViewProps {
   users: MemberUser[];
   onViewDetail: (user: MemberUser) => void;
 }
 
+const tierEmblems: Record<string, string> = {
+  Max: emblemMax,
+  Pro: emblemPro,
+  Basic: emblemBasic,
+  Starter: emblemStarter,
+  Standard: emblemStarter,
+};
+
+const tierColors: Record<string, { bg: string; text: string }> = {
+  Max: { bg: "bg-amber-50", text: "text-amber-700" },
+  Pro: { bg: "bg-blue-50", text: "text-blue-700" },
+  Basic: { bg: "bg-emerald-50", text: "text-emerald-700" },
+  Starter: { bg: "bg-orange-50", text: "text-orange-700" },
+  Standard: { bg: "bg-slate-50", text: "text-slate-600" },
+};
+
 export function UserTableView({ users, onViewDetail }: UserTableViewProps) {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case "REXTRA Club":
-        return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0 text-xs">REXTRA Club</Badge>;
+        return <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-500 hover:to-teal-500 border-0 text-[10px] font-semibold">REXTRA CLUB</Badge>;
       case "Trial Club":
-        return <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100 border-0 text-xs">Trial Club</Badge>;
+        return <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white hover:from-violet-500 hover:to-purple-500 border-0 text-[10px] font-semibold">TRIAL CLUB</Badge>;
       case "Non-Club":
-        return <Badge className="bg-slate-100 text-slate-600 hover:bg-slate-100 border-0 text-xs">Non-Club</Badge>;
+        return <Badge className="bg-slate-500 text-white hover:bg-slate-500 border-0 text-[10px] font-semibold">NON CLUB</Badge>;
     }
+  };
+
+  const getTierBadge = (tier: string) => {
+    const colors = tierColors[tier] || tierColors.Standard;
+    const emblem = tierEmblems[tier] || emblemStarter;
+    return (
+      <div className="flex items-center gap-2">
+        <img src={emblem} alt={tier} className="h-6 w-6 object-contain" />
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded ${colors.bg} ${colors.text}`}>
+          {tier}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -50,9 +85,7 @@ export function UserTableView({ users, onViewDetail }: UserTableViewProps) {
                 </div>
               </TableCell>
               <TableCell>{getCategoryBadge(user.category)}</TableCell>
-              <TableCell>
-                <span className="font-medium">{user.tier}</span>
-              </TableCell>
+              <TableCell>{getTierBadge(user.tier)}</TableCell>
               <TableCell>
                 {user.endDate ? user.endDate.toLocaleDateString("id-ID") : "-"}
               </TableCell>
