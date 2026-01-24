@@ -1,14 +1,14 @@
-import { MemberUser, JourneyEvent } from "./types";
+import { MemberUser } from "./types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  RefreshCw, Coins, Gift, Lock, Calendar,
-  ArrowRight, ShoppingCart, TrendingUp, TrendingDown, Play, XCircle, RotateCcw
+  RefreshCw, Coins, Gift, Lock, ArrowRight, 
+  ShoppingCart, TrendingUp, TrendingDown, Play, XCircle, RotateCcw
 } from "lucide-react";
 import { generateMockJourneyEvents } from "./mockData";
 import { useMemo } from "react";
+import { CategoryBadge, TierBadge } from "./StatusBadges";
 
 // Import emblem assets
 import emblemStarter from "@/assets/emblem-starter.png";
@@ -31,11 +31,11 @@ const tierEmblems: Record<string, string> = {
 };
 
 const tierColors: Record<string, { bg: string; text: string; border: string }> = {
-  Max: { bg: "bg-amber-100/60", text: "text-amber-700", border: "border-amber-200" },
-  Pro: { bg: "bg-blue-100/60", text: "text-blue-700", border: "border-blue-200" },
-  Basic: { bg: "bg-emerald-100/60", text: "text-emerald-700", border: "border-emerald-200" },
-  Starter: { bg: "bg-orange-100/60", text: "text-orange-700", border: "border-orange-200" },
-  Standard: { bg: "bg-slate-100/60", text: "text-slate-600", border: "border-slate-200" },
+  Max: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  Pro: { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200" },
+  Basic: { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200" },
+  Starter: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  Standard: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200" },
 };
 
 const eventIcons: Record<string, React.ElementType> = {
@@ -72,29 +72,6 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
   const tierColor = tierColors[user.tier] || tierColors.Standard;
   const tierEmblem = tierEmblems[user.tier] || emblemStarter;
 
-  const getCategoryBadge = () => {
-    switch (user.category) {
-      case "REXTRA Club":
-        return (
-          <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
-            REXTRA CLUB
-          </Badge>
-        );
-      case "Trial Club":
-        return (
-          <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
-            TRIAL CLUB
-          </Badge>
-        );
-      case "Non-Club":
-        return (
-          <Badge className="absolute -top-2 -right-2 bg-slate-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5 shadow-md">
-            NON CLUB
-          </Badge>
-        );
-    }
-  };
-
   const formatCurrency = (value: number) => `Rp ${value.toLocaleString("id-ID")}`;
 
   return (
@@ -125,7 +102,9 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
             <TabsContent value="current" className="mt-0 p-4 md:p-6 space-y-5">
               {/* STATUS MEMBERSHIP TERKINI */}
               <section className="relative border border-border/60 rounded-xl p-4 space-y-4">
-                {getCategoryBadge()}
+                <div className="absolute -top-2 -right-2">
+                  <CategoryBadge category={user.category} />
+                </div>
                 
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   STATUS MEMBERSHIP TERKINI
@@ -269,9 +248,9 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
                           </span>
                           {!event.isFuture && (
                             <div className="flex items-center gap-1">
-                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{event.statusBefore}</span>
+                              <TierBadge tier={event.statusBefore} size="sm" />
                               <ArrowRight className="h-2 w-2 text-muted-foreground" />
-                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">{event.statusAfter}</span>
+                              <TierBadge tier={event.statusAfter} size="sm" />
                             </div>
                           )}
                         </div>

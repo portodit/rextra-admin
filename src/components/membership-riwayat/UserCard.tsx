@@ -1,8 +1,8 @@
 import { MemberUser } from "./types";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RefreshCw, Calendar, Clock, ChevronRight } from "lucide-react";
+import { TierBadge, CategoryBadge } from "./StatusBadges";
 
 // Import emblem assets
 import emblemStarter from "@/assets/emblem-starter.png";
@@ -20,60 +20,47 @@ const tierConfig: Record<string, {
   bgSoft: string; 
   textColor: string;
   borderColor: string;
+  ring: string;
 }> = {
   Max: { 
     emblem: emblemMax, 
     bgSoft: "bg-amber-50",
     textColor: "text-amber-700",
-    borderColor: "border-amber-200"
+    borderColor: "border-amber-200",
+    ring: "ring-amber-300"
   },
   Pro: { 
     emblem: emblemPro, 
-    bgSoft: "bg-blue-50",
-    textColor: "text-blue-700",
-    borderColor: "border-blue-200"
+    bgSoft: "bg-violet-50",
+    textColor: "text-violet-700",
+    borderColor: "border-violet-200",
+    ring: "ring-violet-300"
   },
   Basic: { 
     emblem: emblemBasic, 
-    bgSoft: "bg-emerald-50",
-    textColor: "text-emerald-700",
-    borderColor: "border-emerald-200"
+    bgSoft: "bg-sky-50",
+    textColor: "text-sky-700",
+    borderColor: "border-sky-200",
+    ring: "ring-sky-300"
   },
   Starter: { 
     emblem: emblemStarter, 
-    bgSoft: "bg-orange-50",
-    textColor: "text-orange-700",
-    borderColor: "border-orange-200"
+    bgSoft: "bg-emerald-50",
+    textColor: "text-emerald-700",
+    borderColor: "border-emerald-200",
+    ring: "ring-emerald-300"
   },
   Standard: { 
     emblem: emblemStarter, 
     bgSoft: "bg-slate-50",
     textColor: "text-slate-600",
-    borderColor: "border-slate-200"
-  },
-};
-
-const categoryConfig: Record<string, { bg: string; text: string; label: string }> = {
-  "REXTRA Club": { 
-    bg: "bg-gradient-to-r from-emerald-500 to-teal-500", 
-    text: "text-white", 
-    label: "REXTRA CLUB" 
-  },
-  "Trial Club": { 
-    bg: "bg-gradient-to-r from-violet-500 to-purple-500", 
-    text: "text-white", 
-    label: "TRIAL CLUB" 
-  },
-  "Non-Club": { 
-    bg: "bg-slate-500", 
-    text: "text-white", 
-    label: "NON CLUB" 
+    borderColor: "border-slate-200",
+    ring: "ring-slate-300"
   },
 };
 
 export function UserCard({ user, onViewDetail }: UserCardProps) {
   const config = tierConfig[user.tier] || tierConfig.Standard;
-  const catConfig = categoryConfig[user.category] || categoryConfig["Non-Club"];
 
   const getValidityStyle = () => {
     if (user.validityStatus === "Expired") {
@@ -96,7 +83,7 @@ export function UserCard({ user, onViewDetail }: UserCardProps) {
       bg: "bg-muted/30", 
       border: "border-border/50",
       text: "text-foreground", 
-      ring: "ring-primary/20"
+      ring: config.ring
     };
   };
 
@@ -134,17 +121,10 @@ export function UserCard({ user, onViewDetail }: UserCardProps) {
           </div>
         </div>
 
-        {/* Status Badges Row - Tier + Category side by side */}
+        {/* Status Badges Row - Using shared components */}
         <div className="mt-4 flex items-center gap-2 flex-wrap">
-          {/* Tier Badge */}
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md ${config.bgSoft} ${config.textColor} ${config.borderColor} border text-xs font-semibold`}>
-            {user.tier}
-          </span>
-          
-          {/* Category Badge */}
-          <Badge className={`${catConfig.bg} ${catConfig.text} border-0 text-[10px] font-semibold px-2 py-0.5 shadow-sm`}>
-            {catConfig.label}
-          </Badge>
+          <TierBadge tier={user.tier} />
+          <CategoryBadge category={user.category} />
         </div>
 
         {/* Duration Info Box */}

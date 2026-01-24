@@ -1,17 +1,16 @@
 import { Transaction } from "./types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-  Copy, CheckCircle2, Clock, XCircle, AlertCircle, Ban,
-  FileText, Receipt, Coins, Gift, 
+  Copy, FileText, Receipt, Coins, Gift, 
   CreditCard, Wallet, Building2, ArrowRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { PaymentStatusBadge, TierBadge, getTimelineEventStyle } from "./StatusBadges";
 
 interface TransactionDetailDrawerProps {
   transaction: Transaction | null;
@@ -32,41 +31,11 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
     return `${prefix}Rp ${Math.abs(value).toLocaleString("id-ID")}`;
   };
 
-  const getPaymentStatusConfig = (status: string) => {
-    const statusConfig: Record<string, { icon: React.ReactNode; bg: string; text: string; ring: string }> = {
-      "Berhasil": { icon: <CheckCircle2 className="h-3.5 w-3.5" />, bg: "bg-emerald-500", text: "text-white", ring: "ring-emerald-200" },
-      "Menunggu": { icon: <Clock className="h-3.5 w-3.5" />, bg: "bg-amber-500", text: "text-white", ring: "ring-amber-200" },
-      "Gagal": { icon: <XCircle className="h-3.5 w-3.5" />, bg: "bg-red-500", text: "text-white", ring: "ring-red-200" },
-      "Dibatalkan": { icon: <Ban className="h-3.5 w-3.5" />, bg: "bg-slate-500", text: "text-white", ring: "ring-slate-200" },
-      "Expired": { icon: <AlertCircle className="h-3.5 w-3.5" />, bg: "bg-slate-400", text: "text-white", ring: "ring-slate-200" },
-      "Refund": { icon: <ArrowRight className="h-3.5 w-3.5" />, bg: "bg-violet-500", text: "text-white", ring: "ring-violet-200" },
-    };
-    return statusConfig[status] || { icon: null, bg: "bg-slate-400", text: "text-white", ring: "ring-slate-200" };
-  };
-
-  const statusConfig = getPaymentStatusConfig(transaction.paymentStatus);
-
   const getPaymentMethodIcon = (method: string) => {
     if (method.includes("E-Wallet") || method.includes("QRIS")) return <Wallet className="h-5 w-5" />;
     if (method.includes("Bank") || method.includes("Virtual Account")) return <Building2 className="h-5 w-5" />;
     if (method.includes("Credit")) return <CreditCard className="h-5 w-5" />;
     return <CreditCard className="h-5 w-5" />;
-  };
-
-  const getTimelineIcon = (status: string) => {
-    if (status.includes("gagal") || status.includes("Gagal")) {
-      return { icon: <XCircle className="h-4 w-4" />, color: "text-red-500", bg: "bg-red-100" };
-    }
-    if (status.includes("kadaluarsa") || status.includes("Expired") || status.includes("dibatalkan") || status.includes("Dibatalkan")) {
-      return { icon: <AlertCircle className="h-4 w-4" />, color: "text-slate-400", bg: "bg-slate-100" };
-    }
-    if (status.includes("berhasil") || status.includes("diaktifkan") || status.includes("diberikan") || status.includes("diperbarui") || status.includes("diperpanjang")) {
-      return { icon: <CheckCircle2 className="h-4 w-4" />, color: "text-emerald-500", bg: "bg-emerald-100" };
-    }
-    if (status.includes("dibuat") || status.includes("menunggu")) {
-      return { icon: <Clock className="h-4 w-4" />, color: "text-blue-500", bg: "bg-blue-100" };
-    }
-    return { icon: <Clock className="h-4 w-4" />, color: "text-slate-400", bg: "bg-slate-100" };
   };
 
   return (
@@ -92,12 +61,9 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
               </Button>
             </div>
 
-            {/* Status Badge + Date inline */}
-            <div className="flex items-center gap-3">
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ring-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.ring}`}>
-                {statusConfig.icon}
-                <span>{transaction.paymentStatus}</span>
-              </div>
+            {/* Status Badge + Date inline - USING SHARED COMPONENT */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <PaymentStatusBadge status={transaction.paymentStatus} size="lg" />
               <span className="text-xs text-muted-foreground">
                 {format(transaction.date, "EEEE, dd MMM yyyy • HH:mm", { locale: id })} WIB
               </span>
@@ -134,10 +100,10 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
                   </div>
                   <div>
                     <p className="text-[11px] text-muted-foreground mb-0.5">Status Perubahan</p>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-medium">{transaction.statusBefore}</span>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <TierBadge tier={transaction.statusBefore} />
                       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-sm font-medium">{transaction.statusAfter}</span>
+                      <TierBadge tier={transaction.statusAfter} />
                     </div>
                   </div>
                   <div>
@@ -235,24 +201,24 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
                   <div className="p-4 space-y-0">
                     {transaction.paymentTimeline.map((item, index) => {
                       const isLast = index === transaction.paymentTimeline.length - 1;
-                      const style = getTimelineIcon(item.status);
+                      const style = getTimelineEventStyle(item.status);
                       
                       return (
                         <div key={index} className="relative flex gap-3">
                           {/* Timeline line */}
                           {!isLast && (
-                            <div className="absolute left-[15px] top-[30px] bottom-0 w-px bg-slate-200" />
+                            <div className="absolute left-[15px] top-[32px] bottom-0 w-px bg-slate-200" />
                           )}
                           
-                          {/* Icon */}
-                          <div className={`relative z-10 h-8 w-8 rounded-full ${style.bg} flex items-center justify-center shrink-0 ${style.color}`}>
-                            {style.icon}
+                          {/* Icon with border */}
+                          <div className={`relative z-10 h-8 w-8 rounded-full ${style.bg} ${style.border} border flex items-center justify-center shrink-0`}>
+                            <span className={style.color}>{style.icon}</span>
                           </div>
                           
                           {/* Content */}
                           <div className={`flex-1 pb-4 ${isLast ? 'pb-0' : ''}`}>
                             <div className="flex items-start justify-between gap-2">
-                              <p className={`text-sm font-medium ${style.color === 'text-emerald-500' ? 'text-slate-800' : style.color === 'text-red-500' ? 'text-red-600' : 'text-slate-600'}`}>
+                              <p className={`text-sm font-medium text-slate-700`}>
                                 {item.status}
                               </p>
                               <span className="text-[11px] text-slate-400 font-mono shrink-0 pt-0.5">
